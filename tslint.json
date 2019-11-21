@@ -1,0 +1,33 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "rules": {
+        "arrow-parens": false,
+        "interface-over-type-literal": false,
+        "max-line-length": false,
+        "object-literal-shorthand": false,
+        "object-literal-sort-keys": false,
+        "ordered-imports": [
+            true,
+            {
+                "import-sources-order": "case-insensitive",
+                "named-imports-order": "lowercase-last",
+                "grouped-imports": true
+            }
+        ],
+        "semicolon": [true, "always"],
+        "trailing-comma": {
+            "singleline": "never",
+            "multiline": {
+                "arrays": "always",
+                "functions": "ignore",
+                "exports": "always",
+                "imports": "always",
+                "objects": "always",
+                "typeLiterals": "always"
+            }
+        }
+    }
+}

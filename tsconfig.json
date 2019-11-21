@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es2018"
+        ],
+        "sourceMap": true,
+        "target": "es2018",
+        "declaration": true,
+        "strict": true,
+        "module": "es2015",
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "outDir": "dist"
+    },
+    "exclude": [],
+    "include": [
+        "src/index.ts"
+    ]
+}

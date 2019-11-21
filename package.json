@@ -1,0 +1,80 @@
+{
+  "name": "restrict-imports-loader",
+  "version": "0.1.0",
+  "description": "A Webpack loader to restrict imports in ES and TypeScript",
+  "keywords": [
+    "loader",
+    "imports",
+    "restrict",
+    "forbidden",
+    "TypeScript",
+    "ES6",
+    "webpack"
+  ],
+  "author": {
+    "name": "Simon Alling",
+    "email": "alling.simon@gmail.com",
+    "url": "https://simonalling.se"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/simonalling/restrict-imports-loader",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simonalling/restrict-imports-loader"
+  },
+  "bugs": {
+    "url": "https://github.com/simonalling/restrict-imports-loader"
+  },
+  "main": "dist/index",
+  "files": [
+    "build/*",
+    "lib/*"
+  ],
+  "scripts": {
+    "build-cjs": "npm run clean && npm run compile-cjs",
+    "build-esm": "npm run clean && npm run compile-esm",
+    "compile-cjs": "tsc -d --module CommonJS -p .",
+    "compile-esm": "tsc -d -p .",
+    "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
+    "clean": "rm -rf dist/*",
+    "lint": "tslint --project .",
+    "prepublishOnly": "npm run verify",
+    "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"dist/**\"",
+    "test": "jest",
+    "verify": "npm run lint && npm run build && npm test"
+  },
+  "sideEffects": false,
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.json"
+      }
+    },
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": ".+\\.test\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "jest": "^24.9.0",
+    "renamer": "^1.1.4",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "@types/json-schema": "^7.0.3",
+    "@types/loader-utils": "^1.1.3",
+    "@types/schema-utils": "^2.4.0",
+    "@types/webpack": "^4.39.9",
+    "awesome-typescript-loader": "^5.2.0",
+    "loader-utils": "^1.2.3",
+    "schema-utils": "^2.5.0",
+    "webpack": "^4.41.2"
+  }
+}
