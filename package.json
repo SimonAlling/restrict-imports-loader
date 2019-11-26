@@ -1,10 +1,12 @@
 {
   "name": "restrict-imports-loader",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A Webpack loader to restrict imports in ES and TypeScript",
   "keywords": [
     "loader",
-    "imports",
+    "import",
+    "package",
+    "module",
     "restrict",
     "forbidden",
     "TypeScript",
@@ -27,8 +29,7 @@
   },
   "main": "dist/index",
   "files": [
-    "build/*",
-    "lib/*"
+    "dist/*"
   ],
   "scripts": {
     "build-cjs": "npm run clean && npm run compile-cjs",
@@ -38,10 +39,10 @@
     "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
     "clean": "rm -rf dist/*",
     "lint": "tslint --project .",
-    "prepublishOnly": "npm run verify",
+    "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"dist/**\"",
     "test": "jest",
-    "verify": "npm run lint && npm run build && npm test"
+    "verify": "npm run lint && npm run build && npm test && npm pack"
   },
   "sideEffects": false,
   "jest": {
@@ -61,7 +62,9 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
+    "cli-confirm": "^1.0.1",
     "jest": "^24.9.0",
+    "no-emit-webpack-plugin": "^2.0.1",
     "renamer": "^1.1.4",
     "ts-jest": "^24.1.0",
     "tslint": "^5.20.1",

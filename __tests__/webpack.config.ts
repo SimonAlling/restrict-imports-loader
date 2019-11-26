@@ -1,5 +1,6 @@
 import * as path from "path";
 import { Severity, everythingIn } from "../src";
+const NoEmitPlugin = require("no-emit-webpack-plugin");
 
 const SRC_IN_TESTS = "src" as const;
 
@@ -22,6 +23,7 @@ export default (x: {
                         loader: "awesome-typescript-loader",
                         options: {
                             silent: true,
+                            transpileOnly: true, // to speed up tests
                         },
                     },
                     {
@@ -39,6 +41,9 @@ export default (x: {
             },
         ],
     },
+    plugins: [
+        new NoEmitPlugin(), // to prevent files from being emitted in dist/
+    ],
     resolve: {
         extensions: [ ".ts", ".tsx", ".mjs", ".js", ".jsx" ],
     },
