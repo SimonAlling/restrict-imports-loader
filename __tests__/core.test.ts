@@ -16,12 +16,12 @@ const SOURCE = {
 
 it("understands all import kinds", () => {
     expect(checkAndSummarize(SOURCE.different_import_kinds, RESTRICT.typescript)).toEqual([[
-        [ `typescript`, `import {} from "typescript";`                  ],
-        [ `typescript`, `import * as typescriptStar from "typescript";` ],
-        [ `typescript`, `import typescriptDefault from "typescript";`   ],
-        [ `typescript`, `import "typescript";`                          ],
-        [ `typescript`, `import typescriptRequire = require("typescript");` ],
-        [ `typescript`, `export {} from "typescript";`                  ],
+        [ `typescript`, `import {} from "typescript";`                        ],
+        [ `typescript`, `import * as typescriptStar from "typescript";`       ],
+        [ `typescript`, `import typescriptDefault from "typescript";`         ],
+        [ `typescript`, `import "typescript";`                                ],
+        [ `typescript`, `import typescriptRequire = require("typescript");`   ],
+        [ `typescript`, `export {} from "typescript";`                        ],
     ]]);
 });
 
