@@ -119,15 +119,15 @@ import * as fp from "lodash/fp"; // error
 Only **static ES2015 imports** are supported, for example:
 
   * `import {} from "typescript";`
-  * `import * as typescriptStar from "typescript";`
-  * `import typescriptDefault from "typescript";`
+  * `import * as ts from "typescript";`
+  * `import ts from "typescript";`
   * `import "typescript";`
   * `export {} from "typescript";`
 
 These are **not supported**:
 
-  * `require("typescript")`
-  * `import("typescript")`
+  * `const ts = require("typescript");`
+  * `const ts = import("typescript");`
 
 
 
