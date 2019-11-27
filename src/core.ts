@@ -37,12 +37,11 @@ function checkNode(node: ts.Node, decider: Decider, errorAccumulator: ImportDeta
 function checkInteresting(interestingNode: InterestingNode, decider: Decider, errorAccumulator: ImportDetails[]): void {
     interestingNode.forEachChild(node => {
         if (ts.isStringLiteral(node) || ts.isExternalModuleReference(node)) {
-            const stringLiteral = (
+            const importPath = (
                 ts.isExternalModuleReference(node)
                 ? node.expression as ts.StringLiteral // (It is a grammar error otherwise.)
                 : node
-            );
-            const importPath = unquote(stringLiteral.getFullText().trim());
+            ).text;
             if (isRestricted(importPath, decider)) {
                 errorAccumulator.push({ path: importPath, node: interestingNode });
             }
@@ -64,9 +63,4 @@ function isInteresting(node: ts.Node): node is InterestingNode {
         ts.isExportDeclaration,
         ts.isImportEqualsDeclaration,
     ].some(f => f(node));
-}
-
-// Just strips the first and last character.
-function unquote(quoted: string): string {
-    return quoted.substring(1, quoted.length - 1);
 }
