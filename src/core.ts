@@ -27,15 +27,15 @@ function badImportsIn(rootNode: ts.Node, decider: Decider): readonly ImportDetai
 }
 
 function checkNode(node: ts.Node, decider: Decider, errorAccumulator: ImportDetails[]): void {
-    if (isImportOrExportDeclaration(node)) {
-        checkDeclaration(node, decider, errorAccumulator);
+    if (isInteresting(node)) {
+        checkInteresting(node, decider, errorAccumulator);
     } else {
         ts.forEachChild(node, n => checkNode(n, decider, errorAccumulator));
     }
 }
 
-function checkDeclaration(declaration: InterestingNode, decider: Decider, errorAccumulator: ImportDetails[]): void {
-    declaration.forEachChild(node => {
+function checkInteresting(interestingNode: InterestingNode, decider: Decider, errorAccumulator: ImportDetails[]): void {
+    interestingNode.forEachChild(node => {
         if (ts.isStringLiteral(node) || ts.isExternalModuleReference(node)) {
             const stringLiteral = (
                 ts.isExternalModuleReference(node)
@@ -44,7 +44,7 @@ function checkDeclaration(declaration: InterestingNode, decider: Decider, errorA
             );
             const importPath = unquote(stringLiteral.getFullText().trim());
             if (isRestricted(importPath, decider)) {
-                errorAccumulator.push({ path: importPath, node: declaration });
+                errorAccumulator.push({ path: importPath, node: interestingNode });
             }
         }
     });
@@ -58,7 +58,7 @@ function isRestricted(name: string, decider: Decider): boolean {
     );
 }
 
-function isImportOrExportDeclaration(node: ts.Node): node is InterestingNode {
+function isInteresting(node: ts.Node): node is InterestingNode {
     return [
         ts.isImportDeclaration,
         ts.isExportDeclaration,
