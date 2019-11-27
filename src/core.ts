@@ -9,6 +9,8 @@ export type Decider = RegExp | ((importPath: string) => boolean);
 
 export type Deciders = readonly Decider[];
 
+type InterestingNode = ts.ImportDeclaration | ts.ExportDeclaration | ts.ImportEqualsDeclaration;
+
 export function check(x: {
     source: string,
     deciders: Deciders,
@@ -32,10 +34,15 @@ function checkNode(node: ts.Node, decider: Decider, errorAccumulator: ImportDeta
     }
 }
 
-function checkDeclaration(declaration: ts.Node, decider: Decider, errorAccumulator: ImportDetails[]): void {
+function checkDeclaration(declaration: InterestingNode, decider: Decider, errorAccumulator: ImportDetails[]): void {
     declaration.forEachChild(node => {
-        if (node.kind === ts.SyntaxKind.StringLiteral) {
-            const importPath = unquote(node.getFullText().trim());
+        if (ts.isStringLiteral(node) || ts.isExternalModuleReference(node)) {
+            const stringLiteral = (
+                ts.isExternalModuleReference(node)
+                ? node.expression as ts.StringLiteral // (It is a grammar error otherwise.)
+                : node
+            );
+            const importPath = unquote(stringLiteral.getFullText().trim());
             if (isRestricted(importPath, decider)) {
                 errorAccumulator.push({ path: importPath, node: declaration });
             }
@@ -51,8 +58,12 @@ function isRestricted(name: string, decider: Decider): boolean {
     );
 }
 
-function isImportOrExportDeclaration(node: ts.Node): boolean {
-    return ts.isImportDeclaration(node) || ts.isExportDeclaration(node);
+function isImportOrExportDeclaration(node: ts.Node): node is InterestingNode {
+    return [
+        ts.isImportDeclaration,
+        ts.isExportDeclaration,
+        ts.isImportEqualsDeclaration,
+    ].some(f => f(node));
 }
 
 // Just strips the first and last character.

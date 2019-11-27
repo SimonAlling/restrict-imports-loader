@@ -122,6 +122,7 @@ Only **static ES2015 imports** are supported, for example:
   * `import * as ts from "typescript";`
   * `import ts from "typescript";`
   * `import "typescript";`
+  * `import ts = require("typescript");` (yes, [it is static](https://github.com/microsoft/TypeScript/blob/7cf6c70d90b60e962db417d80290288eb786b5fd/doc/spec.md#1133-import-require-declarations))
   * `export {} from "typescript";`
 
 These are **not supported**:

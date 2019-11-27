@@ -20,6 +20,7 @@ it("understands all import kinds", () => {
         [ `typescript`, `import * as typescriptStar from "typescript";` ],
         [ `typescript`, `import typescriptDefault from "typescript";`   ],
         [ `typescript`, `import "typescript";`                          ],
+        [ `typescript`, `import typescriptRequire = require("typescript");` ],
         [ `typescript`, `export {} from "typescript";`                  ],
     ]]);
 });
