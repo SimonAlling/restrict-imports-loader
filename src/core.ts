@@ -22,16 +22,11 @@ export function check(x: {
 
 function badImportsIn(rootNode: ts.SourceFile, decider: Decider): readonly ImportDetails[] {
     const errorAccumulator: ImportDetails[] = [];
-    checkNode(rootNode, decider, errorAccumulator);
+    // Only SourceFiles can contain interesting nodes; imports in namespace/module blocks cannot reference modules.
+    ts.forEachChild(rootNode, node => {
+        if (isInteresting(node)) checkInteresting(node, decider, errorAccumulator);
+    });
     return errorAccumulator;
-}
-
-function checkNode(node: ts.Node, decider: Decider, errorAccumulator: ImportDetails[]): void {
-    if (isInteresting(node)) {
-        checkInteresting(node, decider, errorAccumulator);
-    } else {
-        ts.forEachChild(node, n => checkNode(n, decider, errorAccumulator));
-    }
 }
 
 function checkInteresting(interestingNode: InterestingNode, decider: Decider, errorAccumulator: ImportDetails[]): void {
