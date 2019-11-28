@@ -20,11 +20,15 @@ export function check(x: {
     return core.check({
         source: x.source,
         deciders: x.restricted,
-        fileName: x.fileName || "",
-        setParentNodes: x.setParentNodes === undefined ? true : x.setParentNodes,
+        fileName: defaultTo("", x.fileName),
+        setParentNodes: defaultTo(true, x.setParentNodes),
     });
 }
 
 export function everythingIn(packageName: string): RegExp {
     return new RegExp(String.raw`^${packageName}(\/.*)?$`);
+}
+
+function defaultTo<T>(def: T, x: T | undefined): T {
+    return x === undefined ? def : x;
 }
