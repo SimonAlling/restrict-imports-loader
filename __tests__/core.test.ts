@@ -10,6 +10,7 @@ const RESTRICT = {
 
 const SOURCE = {
     different_import_kinds: sourceFile("different-import-kinds.ts"),
+    minimal: sourceFile("minimal.ts"),
     submodules: sourceFile("submodules.ts"),
     prefixes: sourceFile("prefixes.ts"),
 };
@@ -50,6 +51,22 @@ it("treats prefixes correctly", () => {
         [ `typescript/index`   , `import "typescript/index";`    ],
         [ `typescript/index.ts`, `import "typescript/index.ts";` ],
     ]]);
+});
+
+it("understands the setParentNodes option", () => {
+    {
+        const badImports = check({ source: SOURCE.minimal, restricted: RESTRICT.typescript, setParentNodes: true });
+        expect(badImports[0][0].node.parent).toBeDefined();
+    }
+    {
+        const badImports = check({ source: SOURCE.minimal, restricted: RESTRICT.typescript, setParentNodes: false });
+        expect(badImports[0][0].node.parent).not.toBeDefined();
+    }
+});
+
+it("defaults to true for setParentNodes", () => {
+    const badImports = check({ source: SOURCE.minimal, restricted: RESTRICT.typescript });
+    expect(badImports[0][0].node.parent).toBeDefined();
 });
 
 function checkAndSummarize(source: string, deciders: Deciders): readonly (readonly [string, string][])[] {

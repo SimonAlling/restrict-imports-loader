@@ -15,11 +15,13 @@ export function check(x: {
     source: string,
     restricted: core.Deciders,
     fileName?: string,
+    setParentNodes?: boolean,
 }): ReadonlyArray<ReadonlyArray<core.ImportDetails>> {
     return core.check({
         source: x.source,
         deciders: x.restricted,
         fileName: x.fileName || "",
+        setParentNodes: x.setParentNodes === undefined ? true : x.setParentNodes,
     });
 }
 

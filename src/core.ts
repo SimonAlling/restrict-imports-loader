@@ -15,8 +15,9 @@ export function check(x: {
     source: string,
     deciders: Deciders,
     fileName: string,
+    setParentNodes: boolean,
 }): ReadonlyArray<ReadonlyArray<ImportDetails>> {
-    const sourceFile = ts.createSourceFile(x.fileName, x.source, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(x.fileName, x.source, ts.ScriptTarget.Latest, x.setParentNodes);
     return x.deciders.map(decider => badImportsIn(sourceFile, decider));
 }
 

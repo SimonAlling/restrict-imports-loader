@@ -46,5 +46,6 @@ it("exposes the intended API", () => {
     const decidersFunction: Deciders = [ deciderFunction ];
     const checkedWithRegex: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersRegex });
     const checkedWithFunction: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction });
+    const checkedWithSetParentNodes: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction, setParentNodes: false });
     const everythingInEmptyString: RegExp = everythingIn("");
 });
