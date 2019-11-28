@@ -44,7 +44,7 @@ it("exposes the intended API", () => {
     };
     const decidersRegex: Deciders = [ deciderRegex ];
     const decidersFunction: Deciders = [ deciderFunction ];
-    const checkedWithRegex: readonly (readonly ImportDetails[])[] = check("", decidersRegex);
-    const checkedWithFunction: readonly (readonly ImportDetails[])[] = check("", decidersFunction);
+    const checkedWithRegex: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersRegex });
+    const checkedWithFunction: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction });
     const everythingInEmptyString: RegExp = everythingIn("");
 });

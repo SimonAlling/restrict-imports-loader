@@ -53,7 +53,7 @@ it("treats prefixes correctly", () => {
 });
 
 function checkAndSummarize(source: string, deciders: Deciders): readonly (readonly [string, string][])[] {
-    return check(source, deciders).map(items => items.map(item => [ item.path, item.node.getFullText().trim() ]));
+    return check({ source, restricted: deciders }).map(items => items.map(item => [ item.path, item.node.getFullText().trim() ]));
 }
 
 function sourceFile(name: string): string {

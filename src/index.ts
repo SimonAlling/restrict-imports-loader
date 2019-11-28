@@ -11,15 +11,15 @@ export default function(this: webpack.loader.LoaderContext, source: string): str
     return loader.run(this, source);
 }
 
-export function check(
+export function check(x: {
     source: string,
     restricted: core.Deciders,
     fileName?: string,
-): ReadonlyArray<ReadonlyArray<core.ImportDetails>> {
+}): ReadonlyArray<ReadonlyArray<core.ImportDetails>> {
     return core.check({
-        source: source,
-        deciders: restricted,
-        fileName: fileName || "",
+        source: x.source,
+        deciders: x.restricted,
+        fileName: x.fileName || "",
     });
 }
 
