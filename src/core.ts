@@ -20,7 +20,7 @@ export function check(x: {
     return x.deciders.map(decider => badImportsIn(sourceFile, decider));
 }
 
-function badImportsIn(rootNode: ts.Node, decider: Decider): readonly ImportDetails[] {
+function badImportsIn(rootNode: ts.SourceFile, decider: Decider): readonly ImportDetails[] {
     const errorAccumulator: ImportDetails[] = [];
     checkNode(rootNode, decider, errorAccumulator);
     return errorAccumulator;
