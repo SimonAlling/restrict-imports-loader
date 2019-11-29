@@ -105,8 +105,7 @@ export function run(loaderContext: webpack.loader.LoaderContext, source: string)
                     loaderContext.emitWarning(err);
                     break;
                 default:
-                    // Enforce exhaustiveness:
-                    const _: never = severity; void _; // tslint:disable-line:no-unused-expression
+                    const _: never = severity; throw _; // enforces exhaustiveness
             }
         }
     });
