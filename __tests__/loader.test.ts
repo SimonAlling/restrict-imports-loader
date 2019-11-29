@@ -2,6 +2,15 @@ import * as webpack from "webpack";
 
 import CONFIG_WITH from "./webpack.config";
 
+const EXAMPLE_ERROR_MESSAGE = `\
+Found restricted imports.
+
+  • "typescript", imported here:
+
+        import * as _ from "typescript";
+
+`;
+
 describe("Loader", () => {
     jest.setTimeout(30000);
 
@@ -51,6 +60,18 @@ describe("Loader", () => {
                 expect(firstWarning).toBeInstanceOf(Error);
                 expect(firstWarning.name).toBe(`ModuleWarning`);
                 expect(firstWarning.message).toMatch(`"typescript"`);
+                done();
+            }
+        );
+    });
+
+    it("should format error messages correctly", done => {
+        compile(
+            CONFIG_WITH({ entry: "main.ts", severity: "error" }),
+            (_, compilation) => {
+                const firstError = compilation.errors[0];
+                const ourErrorMessage = (firstError.message as string).split("\n").slice(1).join("\n");
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE);
                 done();
             }
         );

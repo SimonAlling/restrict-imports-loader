@@ -3,5 +3,6 @@ export function quote(s: string): string {
 }
 
 export function indentBy(n: number) {
-    return (s: string) => s.split("\n").map(line => " ".repeat(n) + line).join("\n");
+    const indentIfNotEmpty = (line: string) => line === "" ? "" : " ".repeat(n) + line;
+    return (s: string) => s.split("\n").map(indentIfNotEmpty).join("\n");
 }
