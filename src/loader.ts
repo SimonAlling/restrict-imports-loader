@@ -126,7 +126,7 @@ function errorMessage(setParentNodesWasUsed: boolean): (i: core.ImportDetails) =
     return i => `• ${quote(i.path)}` + (setParentNodesWasUsed ? [
         `, imported here:`,
         ``,
-        indentBy(6 /* bullet + space + 4 spaces */)(i.node.getFullText().trim()),
+        indentBy(6 /* bullet + space + 4 spaces */)(i.node.getText()),
         ``,
         ``,
         ``,
