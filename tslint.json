@@ -5,6 +5,7 @@
     ],
     "rules": {
         "arrow-parens": false,
+        "curly": [ true, "ignore-same-line"],
         "interface-over-type-literal": false,
         "max-line-length": false,
         "object-literal-shorthand": false,
