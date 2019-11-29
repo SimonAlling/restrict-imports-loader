@@ -7,6 +7,7 @@ const SRC_IN_TESTS = "src" as const;
 export default (x: {
     severity: Severity,
     entry: string,
+    prioritizePerformance?: boolean,
 }) => ({
     mode: "development" as const,
     entry: {
@@ -30,6 +31,7 @@ export default (x: {
                         loader: path.resolve(__dirname, "..", "src", "index.ts"),
                         options: {
                             severity: x.severity,
+                            prioritizePerformance: x.prioritizePerformance,
                             rules: [
                                 {
                                     restricted: everythingIn("typescript"),

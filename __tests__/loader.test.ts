@@ -55,6 +55,30 @@ describe("Loader", () => {
             }
         );
     });
+
+    it("should handle the prioritizePerformance option correctly", done => {
+        compile(
+            CONFIG_WITH({ entry: "main.ts", severity: "error" }),
+            (_, compilation) => {
+                expect(compilation.errors[0].message).toMatch(`import * as _ from "typescript";`);
+                done();
+            }
+        );
+        compile(
+            CONFIG_WITH({ entry: "main.ts", severity: "error", prioritizePerformance: false }),
+            (_, compilation) => {
+                expect(compilation.errors[0].message).toMatch(`import * as _ from "typescript";`);
+                done();
+            }
+        );
+        compile(
+            CONFIG_WITH({ entry: "main.ts", severity: "error", prioritizePerformance: true }),
+            (_, compilation) => {
+                expect(compilation.errors[0].message).not.toMatch(`import * as _ from "typescript";`);
+                done();
+            }
+        );
+    });
 });
 
 function compile(
