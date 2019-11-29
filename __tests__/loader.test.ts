@@ -140,6 +140,7 @@ describe("Loader", () => {
         compile(
             CONFIG_WITH({ entry: "main.ts", severity: "error", prioritizePerformance: true }),
             (_, compilation) => {
+                expect(compilation.errors[0].message).toMatch(`• "typescript"`);
                 expect(compilation.errors[0].message).not.toMatch(`import * as _ from "typescript";`);
                 done();
             }
