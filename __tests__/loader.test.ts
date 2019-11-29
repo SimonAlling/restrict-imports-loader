@@ -11,6 +11,20 @@ Found restricted imports.
 
 `;
 
+const EXAMPLE_ERROR_MESSAGE_MULTIPLE = `\
+Found restricted imports.
+
+  • "typescript", imported here:
+
+        import * as _ from "typescript";
+
+
+  • "typescript", imported here:
+
+        import {} from "typescript";
+
+`;
+
 describe("Loader", () => {
     jest.setTimeout(30000);
 
@@ -70,8 +84,20 @@ describe("Loader", () => {
             CONFIG_WITH({ entry: "main.ts", severity: "error" }),
             (_, compilation) => {
                 const firstError = compilation.errors[0];
-                const ourErrorMessage = (firstError.message as string).split("\n").slice(1).join("\n");
+                const ourErrorMessage = withoutFirstLine(firstError.message as string);
                 expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE);
+                done();
+            }
+        );
+    });
+
+    it("should format multiple errors from the same file correctly", done => {
+        compile(
+            CONFIG_WITH({ entry: "multiple.ts", severity: "error" }),
+            (_, compilation) => {
+                const firstError = compilation.errors[0];
+                const ourErrorMessage = withoutFirstLine(firstError.message as string);
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_MULTIPLE);
                 done();
             }
         );
@@ -114,4 +140,8 @@ function compile(
         if (err) throw err;
         callback(stats, stats.compilation);
     });
+}
+
+function withoutFirstLine(s: string): string {
+    return s.split("\n").slice(1).join("\n");
 }
