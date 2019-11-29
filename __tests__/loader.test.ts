@@ -79,6 +79,25 @@ describe("Loader", () => {
         );
     });
 
+    it("should find errors in different files correctly", done => {
+        compile(
+            CONFIG_WITH({ entry: "main-different-files.ts", severity: "error" }),
+            (stats, compilation) => {
+                expect(stats.hasErrors()).toBe(true);
+                expect(compilation.errors).toHaveLength(2);
+                const firstError = compilation.errors[0];
+                const secondError = compilation.errors[1];
+                expect(firstError).toBeInstanceOf(Error);
+                expect(secondError).toBeInstanceOf(Error);
+                expect(firstError.name).toBe(`ModuleError`);
+                expect(firstError.message).toMatch(`import * as tsInFunctions from "typescript";`);
+                expect(secondError.name).toBe(`ModuleError`);
+                expect(secondError.message).toMatch(`import * as tsInMain from "typescript";`);
+                done();
+            }
+        );
+    });
+
     it("should format error messages correctly", done => {
         compile(
             CONFIG_WITH({ entry: "main.ts", severity: "error" }),
