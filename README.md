@@ -12,7 +12,7 @@ npm install --save-dev restrict-imports-loader
 
 **NOTE:** Only static imports are supported; see _Limitations_.
 
-Configuration (`webpack.config.js`):
+Configuration example (`webpack.config.js`):
 
 ```javascript
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        include: path.resolve(__dirname, "src"), // example
+        include: path.resolve(__dirname, "src"),
         loaders: [
           {
             loader: "awesome-typescript-loader", // or babel-loader, etc
@@ -44,12 +44,24 @@ module.exports = {
 }
 ```
 
-Source code (e.g. `index.ts`):
+Source code (e.g. `src/index.ts`):
 
 ```typescript
 import * as ts from "typescript"; // OK
 import * as _ from "lodash"; // error
 import * as fp from "lodash/fp"; // OK (see "Restrict Entire Package" for more info)
+```
+
+Webpack output:
+
+```
+ERROR in ./src/index.ts
+Module build failed (from ../restrict-imports-loader/dist/index.js):
+Found restricted imports:
+
+  • "lodash", imported here:
+
+        import * as _ from "lodash";
 ```
 
 
