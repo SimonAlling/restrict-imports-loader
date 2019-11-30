@@ -92,7 +92,7 @@ Example:
 By default, error messages include the faulty import statement exactly as written:
 
 ```
-Found restricted imports.
+Found restricted imports:
 
   • "typescript", imported here:
 
@@ -102,7 +102,7 @@ Found restricted imports.
 Setting `detailedErrorMessages` to `false` means that error messages will only include the import path:
 
 ```
-Found restricted imports.
+Found restricted imports:
 
   • "typescript"
 ```

@@ -7,7 +7,7 @@ import { indentBy, quote } from "./text";
 import { defaultTo } from "./utilities";
 
 const DEFAULT = {
-    info: `Found restricted imports.`,
+    info: `Found restricted imports:`,
     detailedErrorMessages: true,
 } as const;
 

@@ -3,7 +3,7 @@ import * as webpack from "webpack";
 import CONFIG_WITH from "./webpack.config";
 
 const EXAMPLE_ERROR_MESSAGE = `\
-Found restricted imports.
+Found restricted imports:
 
   • "typescript", imported here:
 
@@ -12,7 +12,7 @@ Found restricted imports.
 `;
 
 const EXAMPLE_ERROR_MESSAGE_MULTIPLE = `\
-Found restricted imports.
+Found restricted imports:
 
   • "typescript", imported here:
 
