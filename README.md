@@ -53,13 +53,19 @@ import * as fp from "lodash/fp"; // OK (see "Restrict Entire Package" for more i
 ```
 
 
-### Severity
+### Options
+
+#### `severity`
 
 You can control what happens if a restricted import is found by setting the `severity` option to either `"fatal"` (stop compilation), `"error"` (emit error) or `"warning"` (emit warning).
-The severity level can be overridden for individual rules; see _Multiple Rules_.
+The severity level can be overridden for individual rules; see below.
 
 
-### Multiple Rules
+#### `rules`
+
+Must be a list in which each element has a `restricted` property with a `RegExp` value.
+Each rule can also override the `severity` defined for the loader.
+Example:
 
 ```javascript
 {
