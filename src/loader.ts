@@ -4,10 +4,11 @@ import * as webpack from "webpack";
 
 import * as core from "./core";
 import { indentBy, quote } from "./text";
+import { defaultTo } from "./utilities";
 
 const DEFAULT = {
     info: `Found restricted imports.`,
-    prioritizePerformance: false,
+    detailedErrorMessages: true,
 } as const;
 
 const CONFIG = {
@@ -27,7 +28,7 @@ type LoaderRule = {
 
 export type LoaderOptions = {
     // Must be kept in sync with SCHEMA.
-    prioritizePerformance: boolean
+    detailedErrorMessages?: boolean
     severity: Severity
     rules: readonly LoaderRule[]
 };
@@ -38,8 +39,8 @@ const SCHEMA = {
     type: "object" as const,
     required: [ "rules", "severity" ],
     properties: {
-        prioritizePerformance: {
-            description: `Prioritizes parsing speed, resulting in less detailed error messages (default: ${quote(DEFAULT.prioritizePerformance.toString())}).`,
+        detailedErrorMessages: {
+            description: `Include the faulty import statement when printing an error message (default: ${quote(DEFAULT.detailedErrorMessages.toString())}). If disabled, only the import path (e.g. "typescript") is included.`,
             type: "boolean" as const,
         },
         rules: {
@@ -78,10 +79,9 @@ const SCHEMA = {
 export function run(loaderContext: webpack.loader.LoaderContext, source: string): string {
     const options = getOptions(loaderContext);
     validateOptions(SCHEMA, options, CONFIG);
-    const prioritizePerformance: boolean = options.prioritizePerformance;
     const rules: readonly LoaderRule[] = options.rules;
     const loaderSeverity: Severity = options.severity;
-    const setParentNodes = !prioritizePerformance;
+    const setParentNodes: boolean = defaultTo(true, options.detailedErrorMessages);
     const badImportMatrix = core.check({
         source: source,
         deciders: rules.map(r => r.restricted),

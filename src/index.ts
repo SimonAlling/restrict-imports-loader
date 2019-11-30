@@ -2,6 +2,7 @@ import * as webpack from "webpack";
 
 import * as core from "./core";
 import * as loader from "./loader";
+import { defaultTo } from "./utilities";
 
 export { Decider, Deciders, ImportDetails } from "./core";
 
@@ -27,8 +28,4 @@ export function check(x: {
 
 export function everythingIn(packageName: string): RegExp {
     return new RegExp(String.raw`^${packageName}(\/.*)?$`);
-}
-
-function defaultTo<T>(def: T, x: T | undefined): T {
-    return x === undefined ? def : x;
 }

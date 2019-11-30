@@ -122,7 +122,7 @@ describe("Loader", () => {
         );
     });
 
-    it("should handle the prioritizePerformance option correctly", done => {
+    it("should handle the detailedErrorMessages option correctly", done => {
         compile(
             CONFIG_WITH({ entry: "main.ts", severity: "error" }),
             (_, compilation) => {
@@ -131,14 +131,14 @@ describe("Loader", () => {
             }
         );
         compile(
-            CONFIG_WITH({ entry: "main.ts", severity: "error", prioritizePerformance: false }),
+            CONFIG_WITH({ entry: "main.ts", severity: "error", detailedErrorMessages: true }),
             (_, compilation) => {
                 expect(compilation.errors[0].message).toMatch(`import * as _ from "typescript";`);
                 done();
             }
         );
         compile(
-            CONFIG_WITH({ entry: "main.ts", severity: "error", prioritizePerformance: true }),
+            CONFIG_WITH({ entry: "main.ts", severity: "error", detailedErrorMessages: false }),
             (_, compilation) => {
                 expect(compilation.errors[0].message).toMatch(`• "typescript"`);
                 expect(compilation.errors[0].message).not.toMatch(`import * as _ from "typescript";`);

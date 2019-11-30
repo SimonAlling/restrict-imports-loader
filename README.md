@@ -87,6 +87,29 @@ Example:
 ```
 
 
+#### `detailedErrorMessages`
+
+By default, error messages include the faulty import statement exactly as written:
+
+```
+Found restricted imports.
+
+  • "typescript", imported here:
+
+        import * as _ from "typescript";
+```
+
+Setting `detailedErrorMessages` to `false` means that error messages will only include the import path:
+
+```
+Found restricted imports.
+
+  • "typescript"
+```
+
+Note that Webpack will always show the file name (e.g. `ERROR in ./src/main.ts`).
+
+
 ### Restrict Entire Package
 
 If you want to restrict an entire package, including its submodules, you can use `everythingIn` for convenience and readability:
