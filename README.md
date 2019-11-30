@@ -24,7 +24,7 @@ module.exports = {
         include: path.resolve(__dirname, "src"), // example
         loaders: [
           {
-            loader: "awesome-typescript-loader",
+            loader: "awesome-typescript-loader", // or babel-loader, etc
           },
           {
             loader: "restrict-imports-loader",
