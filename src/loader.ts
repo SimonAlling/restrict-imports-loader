@@ -77,11 +77,11 @@ const SCHEMA = {
 };
 
 export function run(loaderContext: webpack.loader.LoaderContext, source: string): string {
-    const options = getOptions(loaderContext);
+    const options = getOptions(loaderContext) as LoaderOptions;
     validateOptions(SCHEMA, options, CONFIG);
-    const rules: readonly LoaderRule[] = options.rules;
-    const loaderSeverity: Severity = options.severity;
-    const setParentNodes: boolean = defaultTo(true, options.detailedErrorMessages);
+    const rules = options.rules;
+    const loaderSeverity = options.severity;
+    const setParentNodes = defaultTo(true, options.detailedErrorMessages);
     const badImportMatrix = core.check({
         source: source,
         deciders: rules.map(r => r.restricted),
