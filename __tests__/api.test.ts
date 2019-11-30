@@ -22,8 +22,17 @@ it("exposes the intended API", () => {
         path: "",
         node: ts.createEmptyStatement(),
     };
+    const minimalLoaderOptions: LoaderOptions = {
+        severity: severityError,
+        rules: [
+            {
+                restricted: deciderRegex,
+            },
+        ],
+    };
     const loaderOptions: LoaderOptions = {
         severity: severityError,
+        detailedErrorMessages: false,
         rules: [
             {
                 severity: severityFatal,
@@ -33,7 +42,7 @@ it("exposes the intended API", () => {
             {
                 // severity should be optional here
                 restricted: deciderRegex,
-                info: "",
+                // info should be optional here
             },
             {
                 severity: severityWarning,
