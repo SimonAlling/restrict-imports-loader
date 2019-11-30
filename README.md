@@ -88,10 +88,12 @@ Example:
       {
         restricted: /^lodash$/,
         // inherits severity: "error"
+        info: "Please import submodules instead of the full lodash package.",
       },
       {
         restricted: /^typescript$/,
         severity: "warning",
+        // no info specified; default is "Found restricted imports:"
       },
     ],
   },
