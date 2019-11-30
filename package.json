@@ -43,7 +43,7 @@
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"dist/**\"",
     "jest": "jest",
     "test": "npm run lint && npm run jest",
-    "verify": "npm run build && npm test && npm pack"
+    "verify": "repository-check-dirty && npm run build && npm test && npm pack"
   },
   "sideEffects": false,
   "jest": {
@@ -67,6 +67,7 @@
     "jest": "^24.9.0",
     "no-emit-webpack-plugin": "^2.0.1",
     "renamer": "^1.1.4",
+    "repository-check-dirty": "^1.0.2",
     "ts-jest": "^24.1.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.2"
