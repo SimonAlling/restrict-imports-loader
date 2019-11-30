@@ -80,7 +80,6 @@ export function run(loaderContext: webpack.loader.LoaderContext, source: string)
     const options = getOptions(loaderContext) as LoaderOptions;
     validateOptions(SCHEMA, options, CONFIG);
     const rules = options.rules;
-    const loaderSeverity = options.severity;
     const setParentNodes = defaultTo(true, options.detailedErrorMessages);
     const badImportMatrix = core.check({
         source: source,
@@ -91,10 +90,9 @@ export function run(loaderContext: webpack.loader.LoaderContext, source: string)
     rules.forEach((rule, i) => {
         const badImports = badImportMatrix[i];
         if (badImports.length > 0) {
-            const severity = rule.severity || loaderSeverity;
-            const info = rule.info || DEFAULT.info;
-            const message = errorMessageForAll(badImports, info, setParentNodes);
-            const err = new Error(message);
+            const severity = defaultTo(options.severity, rule.severity);
+            const info = defaultTo(DEFAULT.info, rule.info);
+            const err = new Error(errorMessageForAll(badImports, info, setParentNodes));
             switch (severity) {
                 case "fatal":
                     throw err;
