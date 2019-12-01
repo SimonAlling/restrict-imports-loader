@@ -2,16 +2,7 @@ import * as webpack from "webpack";
 
 import CONFIG_WITH from "./webpack.config";
 
-const EXAMPLE_ERROR_MESSAGE = `\
-Found restricted imports:
-
-  • "typescript", imported here:
-
-        import * as _ from "typescript";
-
-`;
-
-const EXAMPLE_ERROR_MESSAGE_MULTIPLE = `\
+const EXAMPLE_ERROR_MESSAGE_WITH_DETAILS = `\
 Found restricted imports:
 
   • "typescript", imported here:
@@ -25,7 +16,7 @@ Found restricted imports:
 
 `;
 
-const EXAMPLE_ERROR_MESSAGE_MULTIPLE_WITHOUT_DETAILS = `\
+const EXAMPLE_ERROR_MESSAGE_WITHOUT_DETAILS = `\
 Found restricted imports:
 
   • "typescript"
@@ -108,35 +99,23 @@ describe("Loader", () => {
 
     it("should format error messages correctly", done => {
         compile(
-            CONFIG_WITH({ entry: "main.ts", severity: "error" }),
-            (_, compilation) => {
-                const firstError = compilation.errors[0];
-                const ourErrorMessage = withoutFirstLine(firstError.message as string);
-                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE);
-                done();
-            }
-        );
-    });
-
-    it("should format multiple errors from the same file correctly", done => {
-        compile(
             CONFIG_WITH({ entry: "multiple.ts", severity: "error" }),
             (_, compilation) => {
                 const firstError = compilation.errors[0];
                 const ourErrorMessage = withoutFirstLine(firstError.message as string);
-                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_MULTIPLE);
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_WITH_DETAILS);
                 done();
             }
         );
     });
 
-    it("should format multiple errors without details correctly", done => {
+    it("should format error messages without details correctly", done => {
         compile(
             CONFIG_WITH({ entry: "multiple.ts", severity: "error", detailedErrorMessages: false }),
             (_, compilation) => {
                 const firstError = compilation.errors[0];
                 const ourErrorMessage = withoutFirstLine(firstError.message as string);
-                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_MULTIPLE_WITHOUT_DETAILS);
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_WITHOUT_DETAILS);
                 done();
             }
         );
