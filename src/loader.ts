@@ -19,9 +19,13 @@ export type Severity = "fatal" | "error" | "warning";
 
 const SEVERITIES: Severity[] = [ "fatal", "error", "warning" ];
 
+type LoaderContext = webpack.loader.LoaderContext;
+
+export type LoaderDecider = RegExp | ((importPath: string, loaderContext: LoaderContext) => Promise<boolean>);
+
 type LoaderRule = {
     // Must be kept in sync with SCHEMA.
-    restricted: RegExp
+    restricted: LoaderDecider
     severity?: Severity
     info?: string
 };
@@ -50,8 +54,11 @@ const SCHEMA = {
                 required: [ "restricted" ],
                 properties: {
                     restricted: {
-                        description: `Regular expressions specifying which imports should be restricted.`,
-                        instanceof: "RegExp",
+                        description: `Regular expression or function (of type (string, webpack.loader.LoaderContext) => Promise<boolean>) specifying which imports should be restricted.`,
+                        anyOf: [
+                            { instanceof: "RegExp" },
+                            { instanceof: "Function" },
+                        ],
                     },
                     severity: {
                         description: `Severity for this specific rule.`,
@@ -76,38 +83,56 @@ const SCHEMA = {
     additionalProperties: false,
 };
 
-export function run(loaderContext: webpack.loader.LoaderContext, source: string): string {
+export function run(loaderContext: LoaderContext, source: string): void {
+    const callback = loaderContext.async();
+    if (callback === undefined) throw new Error(`Webpack did not provide an async callback.`);
     const options = getOptions(loaderContext) as LoaderOptions;
     validateOptions(SCHEMA, options, CONFIG);
     const rules = options.rules;
-    const setParentNodes = defaultTo(true, options.detailedErrorMessages);
-    const badImportMatrix = core.check({
+    const detailedErrorMessages = defaultTo(DEFAULT.detailedErrorMessages, options.detailedErrorMessages);
+    core.checkAsync({
         source: source,
-        deciders: rules.map(r => r.restricted),
+        deciders: rules.map(r => r.restricted).map(deciderFunction(loaderContext)),
         fileName: loaderContext.resourcePath,
-        setParentNodes: setParentNodes,
-    });
-    rules.forEach((rule, i) => {
-        const badImports = badImportMatrix[i];
-        if (badImports.length > 0) {
-            const severity = defaultTo(options.severity, rule.severity);
-            const info = defaultTo(DEFAULT.info, rule.info);
-            const err = new Error(errorMessageForAll(badImports, info, setParentNodes));
-            switch (severity) {
-                case "fatal":
-                    throw err;
-                case "error":
-                    loaderContext.emitError(err);
-                    break;
-                case "warning":
-                    loaderContext.emitWarning(err);
-                    break;
-                default:
-                    const _: never = severity; throw _; // enforces exhaustiveness
+        setParentNodes: detailedErrorMessages,
+    }).then(badImportMatrix => {
+        rules.forEach((rule, i) => {
+            const badImports = badImportMatrix[i];
+            if (badImports.length > 0) {
+                const severity = defaultTo(options.severity, rule.severity);
+                const info = defaultTo(DEFAULT.info, rule.info);
+                const err = new Error(errorMessageForAll(badImports, info, detailedErrorMessages));
+                switch (severity) {
+                    case "fatal":
+                        // Throwing here breaks forEach; calling callback does not.
+                        throw err;
+                    case "error":
+                        loaderContext.emitError(err);
+                        break;
+                    case "warning":
+                        loaderContext.emitWarning(err);
+                        break;
+                    default:
+                        const _: never = severity; throw _; // enforces exhaustiveness
+                }
             }
-        }
+        });
+        callback(null, source);
+    }).catch(err => {
+        callback(err, source);
     });
-    return source;
+}
+
+function deciderFunction(loaderContext: LoaderContext): (decider: LoaderDecider) => core.AsyncDeciderFunction {
+    return decider => (
+        decider instanceof RegExp
+        ? syncToAsync(core.fromRegex(decider))
+        : importPath => decider(importPath, loaderContext)
+    );
+}
+
+function syncToAsync(decider: core.SyncDeciderFunction): core.AsyncDeciderFunction {
+    return importPath => Promise.resolve(decider(importPath));
 }
 
 function errorMessageForAll(imports: readonly core.ImportDetails[], info: string, setParentNodesWasUsed: boolean): string {

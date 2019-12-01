@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { Deciders, check, everythingIn } from "../src/index";
+import { SyncDecider, check, everythingIn } from "../src/index";
 
 const RESTRICT = {
     typescript: [ everythingIn("typescript") ],
@@ -69,7 +69,7 @@ it("defaults to true for setParentNodes", () => {
     expect(badImports[0][0].node.parent).toBeDefined();
 });
 
-function checkAndSummarize(source: string, deciders: Deciders): readonly (readonly [string, string][])[] {
+function checkAndSummarize(source: string, deciders: readonly SyncDecider[]): readonly (readonly [string, string][])[] {
     return check({ source, restricted: deciders }).map(items => items.map(item => [ item.path, item.node.getFullText().trim() ]));
 }
 

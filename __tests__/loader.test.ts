@@ -97,6 +97,57 @@ describe("Loader", () => {
         );
     });
 
+    it("should understand a function for the `restricted` option", done => {
+        compile(
+            CONFIG_WITH({
+                entry: "minimal.ts",
+                severity: "error",
+                restricted: importPath => Promise.resolve(importPath === "typescript"),
+            }),
+            (stats, compilation) => {
+                expect(stats.hasErrors()).toBe(true);
+                expect(compilation.errors).toHaveLength(1);
+                const firstError = compilation.errors[0];
+                expect(firstError).toBeInstanceOf(Error);
+                expect(firstError.name).toBe(`ModuleError`);
+                expect(firstError.message).toMatch(`import "typescript";`);
+                done();
+            }
+        );
+    });
+
+    it("should restrict relative imports correctly", done => {
+        compile(
+            CONFIG_WITH({
+                entry: "relative.ts",
+                severity: "error",
+                restricted: (importPath, loaderContext) => new Promise((resolve, reject) => {
+                    loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
+                        if (err === null) {
+                            resolve(false === result.startsWith(loaderContext.rootContext));
+                        } else {
+                            reject(err.message);
+                        }
+                    });
+                }),
+            }),
+            (stats, compilation) => {
+                expect(stats.hasErrors()).toBe(true);
+                expect(compilation.errors).toHaveLength(1);
+                const firstError = compilation.errors[0];
+                expect(firstError).toBeInstanceOf(Error);
+                expect(firstError.name).toBe(`ModuleError`);
+                expect(firstError.message.match(/•/g)).toHaveLength(3);
+                expect(firstError.message).toMatch(`import * as coretest1 from "../core.test";`);
+                expect(firstError.message).toMatch(`import * as coretest2 from "./../core.test";`);
+                expect(firstError.message).toMatch(`import * as typescript from "typescript";`);
+                expect(firstError.message).not.toMatch(`import * as functions1 from "./functions";`);
+                expect(firstError.message).not.toMatch(`import * as functions2 from "../src/functions";`);
+                done();
+            }
+        );
+    });
+
     it("should format error messages correctly", done => {
         compile(
             CONFIG_WITH({ entry: "multiple.ts", severity: "error" }),

@@ -75,7 +75,7 @@ The severity level can be overridden for individual rules; see below.
 
 #### `rules`
 
-Must be a list in which each element has a `restricted` property with a `RegExp` value.
+Must be a list in which each element has a `restricted` property with a `RegExp` or function value.
 Each rule can also override the `severity` defined for the loader.
 Example:
 
@@ -98,6 +98,34 @@ Example:
     ],
   },
 },
+```
+
+##### Using a function as decider
+
+If you provide a function as the `restricted` value, it must have the type
+
+```typescript
+(string, webpack.loader.LoaderContext) => Promise<boolean>
+```
+
+where the `string` parameter represents the import path in each import statement, e.g. `typescript` in `import * as ts from "typescript";`.
+
+This way, you can use any algorithm you want to determine if an import should be restricted, possibly depending on the loader context.
+In the example below (written in TypeScript), if `decider` is used as the `restricted` value, all imports from outside the project root directory are restricted.
+(The "project root directory" is whatever directory you've specified using [Webpack's `context` option](https://webpack.js.org/configuration/entry-context/#context), or, if not specified, the "current working directory" as seen from Webpack's perspective.)
+
+```typescript
+import { LoaderDecider } from "restrict-imports-loader";
+
+const decider: LoaderDecider = (importPath, loaderContext) => new Promise((resolve, reject) => {
+    loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
+        if (err === null) {
+            resolve(false === result.startsWith(loaderContext.rootContext));
+        } else {
+            reject(err.message);
+        }
+    });
+});
 ```
 
 

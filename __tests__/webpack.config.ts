@@ -1,10 +1,12 @@
 import * as path from "path";
-import { Severity, everythingIn } from "../src";
+import { LoaderDecider, Severity, everythingIn } from "../src";
+import { defaultTo } from "../src/utilities";
 const NoEmitPlugin = require("no-emit-webpack-plugin");
 
 const SRC_IN_TESTS = "src" as const;
 
 export default (x: {
+    restricted?: LoaderDecider,
     severity: Severity,
     entry: string,
     detailedErrorMessages?: boolean,
@@ -19,7 +21,7 @@ export default (x: {
             {
                 test: /\.tsx?$/,
                 include: path.resolve(__dirname, SRC_IN_TESTS),
-                loaders: [
+                use: [
                     {
                         loader: "awesome-typescript-loader",
                         options: {
@@ -34,7 +36,7 @@ export default (x: {
                             detailedErrorMessages: x.detailedErrorMessages,
                             rules: [
                                 {
-                                    restricted: everythingIn("typescript"),
+                                    restricted: defaultTo(everythingIn("typescript"), x.restricted),
                                 },
                             ],
                         },
