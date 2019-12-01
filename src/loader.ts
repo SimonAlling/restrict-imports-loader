@@ -121,12 +121,16 @@ function errorMessageForAll(imports: readonly core.ImportDetails[], info: string
 }
 
 function errorMessage(setParentNodesWasUsed: boolean): (i: core.ImportDetails) => string {
-    return i => `• ${quote(i.path)}` + (setParentNodesWasUsed ? [
-        `, imported here:`,
-        ``,
-        indentBy(6 /* bullet + space + 4 spaces */)(i.node.getText()),
-        ``,
-        ``,
-        ``,
-    ].join("\n") : "");
+    const details = (i: core.ImportDetails) => (
+        setParentNodesWasUsed
+        ? [
+            `, imported here:`,
+            ``,
+            indentBy(6 /* bullet + space + 4 spaces */)(i.node.getText()),
+            ``,
+            ``,
+        ].join("\n")
+        : ""
+    );
+    return i => `• ` + quote(i.path) + details(i) + `\n`;
 }

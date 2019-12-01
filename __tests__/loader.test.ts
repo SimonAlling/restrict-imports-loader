@@ -25,6 +25,14 @@ Found restricted imports:
 
 `;
 
+const EXAMPLE_ERROR_MESSAGE_MULTIPLE_WITHOUT_DETAILS = `\
+Found restricted imports:
+
+  • "typescript"
+  • "typescript"
+
+`;
+
 describe("Loader", () => {
     jest.setTimeout(30000);
 
@@ -117,6 +125,18 @@ describe("Loader", () => {
                 const firstError = compilation.errors[0];
                 const ourErrorMessage = withoutFirstLine(firstError.message as string);
                 expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_MULTIPLE);
+                done();
+            }
+        );
+    });
+
+    it("should format multiple errors without details correctly", done => {
+        compile(
+            CONFIG_WITH({ entry: "multiple.ts", severity: "error", detailedErrorMessages: false }),
+            (_, compilation) => {
+                const firstError = compilation.errors[0];
+                const ourErrorMessage = withoutFirstLine(firstError.message as string);
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_MULTIPLE_WITHOUT_DETAILS);
                 done();
             }
         );
