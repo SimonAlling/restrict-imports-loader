@@ -41,9 +41,9 @@
     "lint": "tslint --project .",
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"dist/**\"",
-    "jest": "jest",
-    "test": "npm run lint && npm run jest",
-    "verify": "repository-check-dirty && npm run build && npm test && npm pack"
+    "test": "jest",
+    "test-clean": "jest --no-cache",
+    "verify": "repository-check-dirty && npm run build && npm run lint && npm run test-clean && npm pack"
   },
   "sideEffects": false,
   "jest": {
