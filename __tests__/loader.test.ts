@@ -5,12 +5,12 @@ import CONFIG_WITH from "./webpack.config";
 const EXAMPLE_ERROR_MESSAGE_WITH_DETAILS = `\
 Found restricted imports:
 
-  • "typescript", imported here:
+  • "typescript", imported on line 1:
 
         import * as _ from "typescript";
 
 
-  • "typescript", imported here:
+  • "typescript", imported on line 2:
 
         import {} from "typescript";
 
@@ -19,8 +19,24 @@ Found restricted imports:
 const EXAMPLE_ERROR_MESSAGE_WITHOUT_DETAILS = `\
 Found restricted imports:
 
-  • "typescript"
-  • "typescript"
+  • "typescript", imported on line 1
+  • "typescript", imported on line 2
+
+`;
+
+const EXAMPLE_ERROR_MESSAGE_WITH_NON_OBVIOUS_LINE_NUMBERS = `\
+Found restricted imports:
+
+  • "typescript", imported on line 3:
+
+        import {} from "typescript";
+
+
+  • "typescript", imported on line 7:
+
+        import {
+
+        } from "typescript";
 
 `;
 
@@ -167,6 +183,18 @@ describe("Loader", () => {
                 const firstError = compilation.errors[0];
                 const ourErrorMessage = withoutFirstLine(firstError.message as string);
                 expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_WITHOUT_DETAILS);
+                done();
+            }
+        );
+    });
+
+    it("should format error messages correctly with respect to line numbers", done => {
+        compile(
+            CONFIG_WITH({ entry: "line-numbers.ts", severity: "error", detailedErrorMessages: true }),
+            (_, compilation) => {
+                const firstError = compilation.errors[0];
+                const ourErrorMessage = withoutFirstLine(firstError.message as string);
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_WITH_NON_OBVIOUS_LINE_NUMBERS);
                 done();
             }
         );

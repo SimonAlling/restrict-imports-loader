@@ -149,7 +149,7 @@ function errorMessage(setParentNodesWasUsed: boolean): (i: core.ImportDetails) =
     const details = (i: core.ImportDetails) => (
         setParentNodesWasUsed
         ? [
-            `, imported here:`,
+            `:`,
             ``,
             indentBy(6 /* bullet + space + 4 spaces */)(i.node.getText()),
             ``,
@@ -157,5 +157,5 @@ function errorMessage(setParentNodesWasUsed: boolean): (i: core.ImportDetails) =
         ].join("\n")
         : ""
     );
-    return i => `• ` + quote(i.path) + details(i) + `\n`;
+    return i => `• ` + quote(i.path) + `, imported on line ${i.line}` + details(i) + `\n`;
 }

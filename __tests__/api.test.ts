@@ -22,6 +22,7 @@ it("exposes the intended API", () => {
     const importDetails: ImportDetails = {
         path: "",
         node: ts.createEmptyStatement(),
+        line: 1,
     };
     const minimalLoaderOptions: LoaderOptions = {
         severity: severityError,
