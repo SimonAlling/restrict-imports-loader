@@ -10,7 +10,7 @@ npm install --save-dev restrict-imports-loader
 
 ## Usage
 
-**NOTE:** Only static imports are supported; see _Limitations_.
+**NOTE:** Only static imports are supported; see [_Limitations_](#limitations).
 
 Configuration example (`webpack.config.js`):
 
@@ -49,7 +49,7 @@ Source code (e.g. `src/index.ts`):
 ```typescript
 import * as ts from "typescript"; // OK
 import * as _ from "lodash"; // error
-import * as fp from "lodash/fp"; // OK (see "Restrict Entire Package" for more info)
+import * as fp from "lodash/fp"; // OK (see "Restricting an entire package" for more info)
 ```
 
 Webpack output:
