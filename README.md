@@ -118,13 +118,13 @@ In the example below (written in TypeScript), if `decider` is used as the `restr
 import { LoaderDecider } from "restrict-imports-loader";
 
 const decider: LoaderDecider = (importPath, loaderContext) => new Promise((resolve, reject) => {
-    loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
-        if (err === null) {
-            resolve(false === result.startsWith(loaderContext.rootContext));
-        } else {
-            reject(err.message);
-        }
-    });
+  loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
+    if (err === null) {
+      resolve(false === result.startsWith(loaderContext.rootContext));
+    } else {
+      reject(err.message);
+    }
+  });
 });
 ```
 
