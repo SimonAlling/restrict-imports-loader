@@ -179,6 +179,7 @@ Code:
 
 ```typescript
 import * as ts from "typescript"; // OK
+import * as ld from "lodasher"; // OK
 import * as _ from "lodash"; // error
 import * as fp from "lodash/fp"; // error
 ```
