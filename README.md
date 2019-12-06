@@ -59,7 +59,7 @@ ERROR in ./src/index.ts
 Module build failed (from ../restrict-imports-loader/dist/index.js):
 Found restricted imports:
 
-  • "lodash", imported here:
+  • "lodash", imported on line 2:
 
         import * as _ from "lodash";
 ```
@@ -131,22 +131,22 @@ const decider: LoaderDecider = (importPath, loaderContext) => new Promise((resol
 
 #### `detailedErrorMessages`
 
-By default, error messages include the faulty import statement exactly as written:
+By default, error messages include the faulty import statements exactly as written:
 
 ```
 Found restricted imports:
 
-  • "typescript", imported here:
+  • "typescript", imported on line 1:
 
         import * as _ from "typescript";
 ```
 
-Setting `detailedErrorMessages` to `false` means that error messages will only include the import path:
+Setting `detailedErrorMessages` to `false` means that error messages will only include the import path and line number:
 
 ```
 Found restricted imports:
 
-  • "typescript"
+  • "typescript", imported on line 1
 ```
 
 Note that Webpack will always show the file name (e.g. `ERROR in ./src/main.ts`).
