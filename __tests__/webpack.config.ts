@@ -1,5 +1,5 @@
 import * as path from "path";
-import { LoaderDecider, Severity, everythingIn } from "../src";
+import { LoaderDecider, Severity, everythingInPackage } from "../src";
 import { defaultTo } from "../src/utilities";
 const NoEmitPlugin = require("no-emit-webpack-plugin");
 
@@ -36,7 +36,7 @@ export default (x: {
                             detailedErrorMessages: x.detailedErrorMessages,
                             rules: [
                                 {
-                                    restricted: defaultTo(everythingIn("typescript"), x.restricted),
+                                    restricted: defaultTo(everythingInPackage("typescript"), x.restricted),
                                 },
                             ],
                         },

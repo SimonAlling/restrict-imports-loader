@@ -8,7 +8,7 @@ import {
     Severity,
     SyncDecider,
     check,
-    everythingIn,
+    everythingInPackage,
 } from "../src/index";
 import loader from "../src/index";
 
@@ -58,5 +58,5 @@ it("exposes the intended API", () => {
     const checkedWithRegex: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersRegex });
     const checkedWithFunction: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction });
     const checkedWithSetParentNodes: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction, setParentNodes: false });
-    const everythingInEmptyString: RegExp = everythingIn("");
+    const everythingInEmptyString: RegExp = everythingInPackage("");
 });

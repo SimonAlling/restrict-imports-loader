@@ -1,11 +1,11 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { SyncDecider, check, everythingIn } from "../src/index";
+import { SyncDecider, check, everythingInPackage } from "../src/index";
 
 const RESTRICT = {
-    typescript: [ everythingIn("typescript") ],
-    typescript_lib: [ everythingIn("typescript/lib") ],
+    typescript: [ everythingInPackage("typescript") ],
+    typescript_lib: [ everythingInPackage("typescript/lib") ],
 } as const;
 
 const SOURCE = {

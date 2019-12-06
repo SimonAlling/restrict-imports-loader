@@ -8,6 +8,8 @@ export { ImportDetails } from "./core";
 
 export { LoaderDecider, LoaderOptions, Severity } from "./loader";
 
+export { everythingInPackage } from "./deciders";
+
 export default function(this: webpack.loader.LoaderContext, source: string) {
     loader.run(this, source);
 }
@@ -34,8 +36,4 @@ function deciderFunction(decider: SyncDecider): core.SyncDeciderFunction {
         ? core.fromRegex(decider)
         : decider
     );
-}
-
-export function everythingIn(packageName: string): RegExp {
-    return new RegExp(String.raw`^${packageName}(\/.*)?$`);
 }
