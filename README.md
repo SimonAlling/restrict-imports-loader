@@ -152,7 +152,7 @@ Found restricted imports:
 Note that Webpack will always show the file name (e.g. `ERROR in ./src/main.ts`).
 
 
-### Restrict Entire Package
+### Restricting an entire package
 
 If you want to restrict an entire package, including its submodules, you can use `everythingIn` for convenience and readability:
 
