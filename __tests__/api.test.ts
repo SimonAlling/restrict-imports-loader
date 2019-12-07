@@ -9,6 +9,7 @@ import {
     SyncDecider,
     check,
     everythingInPackage,
+    everythingOutside,
 } from "../src/index";
 import loader from "../src/index";
 
@@ -59,4 +60,5 @@ it("exposes the intended API", () => {
     const checkedWithFunction: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction });
     const checkedWithSetParentNodes: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction, setParentNodes: false });
     const everythingInEmptyString: RegExp = everythingInPackage("");
+    const everythingOutsideEmptyString: LoaderDecider = everythingOutside([""]);
 });
