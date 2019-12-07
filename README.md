@@ -154,10 +154,10 @@ Note that Webpack will always show the file name (e.g. `ERROR in ./src/main.ts`)
 
 ### Restricting an entire package
 
-If you want to restrict an entire package, including its submodules, you can use `everythingIn` for convenience and readability:
+If you want to restrict an entire package, including its submodules, you can use `everythingInPackage` for convenience and readability:
 
 ```javascript
-const { everythingIn } = require("restrict-imports-loader");
+const { everythingInPackage } = require("restrict-imports-loader");
 
 module.exports = {
   // ...
@@ -167,7 +167,7 @@ module.exports = {
       severity: "error",
       rules: [
         {
-          restricted: everythingIn("lodash"),
+          restricted: everythingInPackage("lodash"),
         },
       ],
     },
@@ -184,6 +184,13 @@ import * as _ from "lodash"; // error
 import * as fp from "lodash/fp"; // error
 ```
 
+**Note:** `everythingInPackage` is `RegExp`-based, so it can't prevent the programmer from importing the restricted package using a relative import:
+
+```typescript
+import * as _ from "../node_modules/lodash"; // OK
+```
+
+You must [use a function as decider](#using-a-function-as-decider) if you want to prevent that.
 
 
 ### Limitations
