@@ -193,6 +193,34 @@ import * as _ from "../node_modules/lodash"; // OK
 You must [use a function as decider](#using-a-function-as-decider) if you want to prevent that.
 
 
+### Blacklisting or whitelisting directories
+
+You can use `everythingInside` or `everythingOutside` to blacklist or whitelist, respectively, a set of **absolute** directories:
+
+```typescript
+const { everythingOutside } = require("restrict-imports-loader");
+
+module.exports = {
+  // ...
+  {
+    loader: "restrict-imports-loader",
+    options: {
+      severity: "warning",
+      rules: [
+        {
+          restricted: everythingOutside([
+            path.resolve(__dirname, "node_modules"),
+            path.resolve(__dirname, "src"),
+          ]),
+          info: `Imports should resolve to 'node_modules' or 'src'. These do not:`,
+        },
+      ],
+    },
+  },
+};
+```
+
+
 ### Limitations
 
 Only **static ES2015 (ES6) imports** are supported, for example:
