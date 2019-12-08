@@ -8,7 +8,7 @@ export { ImportDetails } from "./core";
 
 export { LoaderDecider, LoaderOptions, Severity } from "./loader";
 
-export { everythingInPackage, everythingOutside } from "./deciders";
+export { everythingInPackage, everythingOutside, everythingInside } from "./deciders";
 
 export default function(this: webpack.loader.LoaderContext, source: string) {
     loader.run(this, source);

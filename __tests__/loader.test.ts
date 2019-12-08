@@ -2,7 +2,7 @@ import * as path from "path";
 import * as webpack from "webpack";
 
 import CONFIG_WITH from "./webpack.config";
-import { everythingOutside } from "../src/deciders";
+import { everythingOutside, everythingInside } from "../src/deciders";
 
 const EXAMPLE_ERROR_MESSAGE_WITH_DETAILS = `\
 Found restricted imports:
@@ -188,6 +188,33 @@ describe("Loader", () => {
                 expect(firstError.message).not.toMatch(`import * as functions1 from "./functions";`);
                 expect(firstError.message).not.toMatch(`import * as functions2 from "../src/functions";`);
                 expect(firstError.message).not.toMatch(`import * as typescript from "typescript";`);
+                done();
+            }
+        );
+    });
+
+    it("should restrict imports correctly with everythingInside", done => {
+        compile(
+            CONFIG_WITH({
+                entry: "relative.ts",
+                severity: "error",
+                restricted: everythingInside([
+                    path.resolve(__dirname, "src"),
+                    path.resolve(__dirname, "..", "node_modules"),
+                ]),
+            }),
+            (stats, compilation) => {
+                expect(stats.hasErrors()).toBe(true);
+                expect(compilation.errors).toHaveLength(1);
+                const firstError = compilation.errors[0];
+                expect(firstError).toBeInstanceOf(Error);
+                expect(firstError.name).toBe(`ModuleError`);
+                expect(firstError.message.match(/•/g)).toHaveLength(3);
+                expect(firstError.message).toMatch(`import * as functions1 from "./functions";`);
+                expect(firstError.message).toMatch(`import * as functions2 from "../src/functions";`);
+                expect(firstError.message).toMatch(`import * as typescript from "typescript";`);
+                expect(firstError.message).not.toMatch(`import * as coretest1 from "../core.test";`);
+                expect(firstError.message).not.toMatch(`import * as coretest2 from "./../core.test";`);
                 done();
             }
         );

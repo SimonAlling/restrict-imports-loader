@@ -7,6 +7,8 @@ export function everythingInPackage(packageName: string): RegExp {
     return new RegExp(String.raw`^${packageName}(\/.*)?$`);
 }
 
+export const everythingInside = everything(true);
+
 export const everythingOutside = everything(false);
 
 // dirs must be a list of absolute directory paths.

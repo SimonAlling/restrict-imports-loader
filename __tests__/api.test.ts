@@ -10,6 +10,7 @@ import {
     check,
     everythingInPackage,
     everythingOutside,
+    everythingInside,
 } from "../src/index";
 import loader from "../src/index";
 
@@ -61,4 +62,5 @@ it("exposes the intended API", () => {
     const checkedWithSetParentNodes: readonly (readonly ImportDetails[])[] = check({ source: "", restricted: decidersFunction, setParentNodes: false });
     const everythingInPackageEmptyString: RegExp = everythingInPackage("");
     const everythingOutsideEmptyString: LoaderDecider = everythingOutside([""]);
+    const everythingInsideEmptyString: LoaderDecider = everythingInside([""]);
 });
