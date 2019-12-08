@@ -7,19 +7,27 @@ export function everythingInPackage(packageName: string): RegExp {
     return new RegExp(String.raw`^${packageName}(\/.*)?$`);
 }
 
+export const everythingOutside = everything(false);
+
 // dirs must be a list of absolute directory paths.
-export function everythingOutside(allowedDirs: readonly string[]): LoaderDecider {
-    return (importPath, loaderContext) => new Promise((resolve, reject) => {
-        loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
-            if (err === null) {
-                const containsResult = (dir: string) => {
-                    const relative = path.relative(dir, result);
-                    return !relative.startsWith("..") && !path.isAbsolute(relative);
-                };
-                resolve(!allowedDirs.some(containsResult));
-            } else {
-                reject(err.message);
-            }
+// Either inside or outside dirs will be restricted, depending on the value of insideIsRestricted.
+function everything(insideIsRestricted: boolean): (dirs: readonly string[]) => LoaderDecider {
+    return dirs => {
+        return (importPath, loaderContext) => new Promise((resolve, reject) => {
+            loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
+                if (err === null) {
+                    resolve(insideIsRestricted === dirs.some(contains(result)));
+                } else {
+                    reject(err.message);
+                }
+            });
         });
-    });
+    };
+}
+
+function contains(contained: string): (dir: string) => boolean {
+    return dir => {
+        const relative = path.relative(dir, contained);
+        return !relative.startsWith("..") && !path.isAbsolute(relative);
+    };
 }
