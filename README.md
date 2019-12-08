@@ -22,7 +22,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         include: path.resolve(__dirname, "src"),
-        loaders: [
+        use: [
           {
             loader: "awesome-typescript-loader", // or babel-loader, etc
           },
