@@ -42,6 +42,31 @@ Found restricted imports:
 
 `;
 
+const EXAMPLE_ERROR_MESSAGE_WITH_INFO = `\
+Found restricted imports:
+
+  • "./functions", imported on line 4:
+
+        import * as functions1 from "./functions";
+
+    (resolved: ${path.resolve(__dirname, "src", "functions.ts")})
+
+
+  • "../src/functions", imported on line 5:
+
+        import * as functions2 from "../src/functions";
+
+    (resolved: ${path.resolve(__dirname, "src", "functions.ts")})
+
+
+  • "typescript", imported on line 7:
+
+        import * as typescript from "typescript";
+
+    (resolved: ${path.resolve(__dirname, "..", "node_modules", "typescript", "lib", "typescript.js")})
+
+`;
+
 describe("Loader", () => {
     jest.setTimeout(30000);
 
@@ -120,7 +145,7 @@ describe("Loader", () => {
             CONFIG_WITH({
                 entry: "minimal.ts",
                 severity: "error",
-                restricted: importPath => Promise.resolve(importPath === "typescript"),
+                restricted: importPath => Promise.resolve({ restricted: importPath === "typescript" }),
             }),
             (stats, compilation) => {
                 expect(stats.hasErrors()).toBe(true);
@@ -142,7 +167,7 @@ describe("Loader", () => {
                 restricted: (importPath, loaderContext) => new Promise((resolve, reject) => {
                     loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
                         if (err === null) {
-                            resolve(false === result.startsWith(loaderContext.rootContext));
+                            resolve({ restricted: false === result.startsWith(loaderContext.rootContext) });
                         } else {
                             reject(err.message);
                         }
@@ -251,6 +276,23 @@ describe("Loader", () => {
                 const firstError = compilation.errors[0];
                 const ourErrorMessage = withoutFirstLine(firstError.message as string);
                 expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_WITH_NON_OBVIOUS_LINE_NUMBERS);
+                done();
+            }
+        );
+    });
+
+    it("should format error messages with info correctly", done => {
+        const restricted = everythingInside([
+            path.resolve(__dirname, "..", "node_modules"),
+            path.resolve(__dirname, "src"),
+        ]);
+        compile(
+            CONFIG_WITH({ entry: "relative.ts", severity: "error", detailedErrorMessages: true, restricted: restricted }),
+            (_, compilation) => {
+                expect(compilation.errors).toHaveLength(1);
+                const firstError = compilation.errors[0];
+                const ourErrorMessage = withoutFirstLine(firstError.message as string);
+                expect(ourErrorMessage).toEqual(EXAMPLE_ERROR_MESSAGE_WITH_INFO);
                 done();
             }
         );

@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { LoaderDecider } from "./loader";
+import { LoaderFunctionDecider } from "./loader";
 
 // packageName can be e.g. "typescript" or "typescript/lib".
 export function everythingInPackage(packageName: string): RegExp {
@@ -13,12 +13,15 @@ export const everythingOutside = everything(false);
 
 // dirs must be a list of absolute directory paths.
 // Either inside or outside dirs will be restricted, depending on the value of insideIsRestricted.
-function everything(insideIsRestricted: boolean): (dirs: readonly string[]) => LoaderDecider {
+function everything(insideIsRestricted: boolean): (dirs: readonly string[]) => LoaderFunctionDecider {
     return dirs => {
         return (importPath, loaderContext) => new Promise((resolve, reject) => {
             loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
                 if (err === null) {
-                    resolve(insideIsRestricted === dirs.some(contains(result)));
+                    resolve({
+                        restricted: insideIsRestricted === dirs.some(contains(result)),
+                        info: `(resolved: ${result})`,
+                    });
                 } else {
                     reject(err.message);
                 }

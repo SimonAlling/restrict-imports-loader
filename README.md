@@ -131,7 +131,7 @@ const decider: LoaderDecider = (importPath, loaderContext) => new Promise((resol
 
 #### `detailedErrorMessages`
 
-By default, error messages include the faulty import statements exactly as written:
+By default, error messages include the faulty import statements exactly as written, as well as any extra info provided by the decider, for example:
 
 ```
 Found restricted imports:
@@ -139,6 +139,8 @@ Found restricted imports:
   • "typescript", imported on line 1:
 
         import * as _ from "typescript";
+
+    (resolved: node_modules/typescript/lib/typescript.js)
 ```
 
 Setting `detailedErrorMessages` to `false` means that error messages will only include the import path and line number:

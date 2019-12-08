@@ -4,7 +4,7 @@ import * as core from "./core";
 import * as loader from "./loader";
 import { defaultTo } from "./utilities";
 
-export { ImportDetails } from "./core";
+export { RestrictedImportDetails } from "./core";
 
 export { LoaderDecider, LoaderOptions, Severity } from "./loader";
 
@@ -21,7 +21,7 @@ export function check(x: {
     restricted: readonly SyncDecider[],
     fileName?: string,
     setParentNodes?: boolean,
-}): ReadonlyArray<ReadonlyArray<core.ImportDetails>> {
+}): ReadonlyArray<ReadonlyArray<core.RestrictedImportDetails>> {
     return core.checkSync({
         source: x.source,
         deciders: x.restricted.map(deciderFunction),

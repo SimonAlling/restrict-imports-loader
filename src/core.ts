@@ -1,18 +1,22 @@
 import ts from "typescript";
 
-import { filterAsync } from "./utilities";
-
-export type ImportDetails = Readonly<{
+type ImportDetails = Readonly<{
     path: string
     node: ts.Node
     line: number // 1-indexed
 }>;
 
+export type RestrictedImportDetails = ImportDetails & Readonly<{
+    info: string | undefined
+}>;
+
 type DeciderFunction<T> = (importPath: string) => T;
 
-export type AsyncDeciderFunction = DeciderFunction<Promise<boolean>>;
+export type Decision = { restricted: false } | { restricted: true, info?: string };
 
-export type SyncDeciderFunction = DeciderFunction<boolean>;
+export type AsyncDeciderFunction = DeciderFunction<Promise<Decision>>;
+
+export type SyncDeciderFunction = DeciderFunction<Decision>;
 
 type InterestingNode = ts.ImportDeclaration | ts.ExportDeclaration | ts.ImportEqualsDeclaration;
 
@@ -21,10 +25,21 @@ export function checkSync(x: {
     deciders: readonly SyncDeciderFunction[],
     fileName: string,
     setParentNodes: boolean,
-}): ReadonlyArray<ReadonlyArray<ImportDetails>> {
+}): ReadonlyArray<ReadonlyArray<RestrictedImportDetails>> {
     const sourceFile = ts.createSourceFile(x.fileName, x.source, ts.ScriptTarget.Latest, x.setParentNodes);
     const imports = importsIn(sourceFile);
-    return x.deciders.map(decider => imports.filter(i => decider(i.path)));
+    return x.deciders.map(decider => onlyRestrictedSync(decider, imports));
+}
+
+function onlyRestrictedSync(decider: SyncDeciderFunction, is: readonly ImportDetails[]): readonly RestrictedImportDetails[] {
+    const result = [];
+    for (const i of is) {
+        const decision = decider(i.path);
+        if (decision.restricted) {
+            result.push({ ...i, info: decision.info });
+        }
+    }
+    return result;
 }
 
 export async function checkAsync(x: {
@@ -32,14 +47,30 @@ export async function checkAsync(x: {
     deciders: readonly AsyncDeciderFunction[],
     fileName: string,
     setParentNodes: boolean,
-}): Promise<ReadonlyArray<ReadonlyArray<ImportDetails>>> {
+}): Promise<ReadonlyArray<ReadonlyArray<RestrictedImportDetails>>> {
     const sourceFile = ts.createSourceFile(x.fileName, x.source, ts.ScriptTarget.Latest, x.setParentNodes);
     const imports = importsIn(sourceFile);
-    return Promise.all(x.deciders.map(async decider => await filterAsync(imports, i => decider(i.path))));
+    return Promise.all(x.deciders.map(decider => onlyRestrictedAsync(decider, imports)));
+}
+
+async function onlyRestrictedAsync(
+    decider: AsyncDeciderFunction,
+    is: readonly ImportDetails[],
+): Promise<readonly RestrictedImportDetails[]> {
+    const isAndDecisions = await Promise.all(
+        is.map(i => decider(i.path).then(decision => ({ i, decision })))
+    );
+    const results: RestrictedImportDetails[] = [];
+    for (const iAndD of isAndDecisions) {
+        if (iAndD.decision.restricted) {
+            results.push({ ...iAndD.i, info: iAndD.decision.info });
+        }
+    }
+    return results;
 }
 
 export function fromRegex(r: RegExp): SyncDeciderFunction {
-    return importPath => r.test(importPath);
+    return importPath => ({ restricted: r.test(importPath) });
 }
 
 function importsIn(rootNode: ts.SourceFile): readonly ImportDetails[] {

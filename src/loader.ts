@@ -21,7 +21,9 @@ const SEVERITIES: Severity[] = [ "fatal", "error", "warning" ];
 
 type LoaderContext = webpack.loader.LoaderContext;
 
-export type LoaderDecider = RegExp | ((importPath: string, loaderContext: LoaderContext) => Promise<boolean>);
+export type LoaderFunctionDecider = (importPath: string, loaderContext: webpack.loader.LoaderContext) => Promise<core.Decision>;
+
+export type LoaderDecider = RegExp | LoaderFunctionDecider;
 
 type LoaderRule = {
     // Must be kept in sync with SCHEMA.
@@ -135,7 +137,7 @@ function syncToAsync(decider: core.SyncDeciderFunction): core.AsyncDeciderFuncti
     return importPath => Promise.resolve(decider(importPath));
 }
 
-function errorMessageForAll(imports: readonly core.ImportDetails[], info: string, setParentNodesWasUsed: boolean): string {
+function errorMessageForAll(imports: readonly core.RestrictedImportDetails[], info: string, setParentNodesWasUsed: boolean): string {
     return [
         info,
         "",
@@ -145,15 +147,15 @@ function errorMessageForAll(imports: readonly core.ImportDetails[], info: string
     ].join("\n");
 }
 
-function errorMessage(setParentNodesWasUsed: boolean): (i: core.ImportDetails) => string {
-    const details = (i: core.ImportDetails) => (
+function errorMessage(setParentNodesWasUsed: boolean): (i: core.RestrictedImportDetails) => string {
+    const details = (i: core.RestrictedImportDetails) => (
         setParentNodesWasUsed
         ? [
             `:`,
             ``,
             indentBy(6 /* bullet + space + 4 spaces */)(i.node.getText()),
             ``,
-            ``,
+            i.info ? indentBy(2 /* bullet + space */)(i.info) + "\n\n" : "",
         ].join("\n")
         : ""
     );
