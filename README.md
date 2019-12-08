@@ -191,6 +191,7 @@ import * as _ from "../node_modules/lodash"; // OK
 ```
 
 You must [use a function as decider](#using-a-function-as-decider) if you want to prevent that.
+See [_Blacklisting or whitelisting directories_](#blacklisting-or-whitelisting-directories) for a convenient approach.
 
 
 ### Blacklisting or whitelisting directories
