@@ -3,6 +3,7 @@ import validateOptions from "schema-utils";
 import * as webpack from "webpack";
 
 import * as core from "./core";
+import * as deciders from "./deciders";
 import { indentBy, quote } from "./text";
 import { defaultTo } from "./utilities";
 
@@ -128,13 +129,9 @@ export function run(loaderContext: LoaderContext, source: string): void {
 function deciderFunction(loaderContext: LoaderContext): (decider: LoaderDecider) => core.AsyncDeciderFunction {
     return decider => (
         decider instanceof RegExp
-        ? syncToAsync(core.fromRegex(decider))
+        ? deciders.matchedBy(decider)
         : importPath => decider(importPath, loaderContext)
     );
-}
-
-function syncToAsync(decider: core.SyncDeciderFunction): core.AsyncDeciderFunction {
-    return importPath => Promise.resolve(decider(importPath));
 }
 
 function errorMessageForAll(imports: readonly core.RestrictedImportDetails[], info: string, setParentNodesWasUsed: boolean): string {

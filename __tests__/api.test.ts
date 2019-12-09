@@ -6,11 +6,12 @@ import {
     RestrictedImportDetails,
     LoaderOptions,
     Severity,
-    SyncDecider,
-    check,
+    AsyncDecider,
+    checkAsync,
     everythingInPackage,
     everythingOutside,
     everythingInside,
+    matchedBy,
 } from "../src/index";
 import loader from "../src/index";
 
@@ -18,8 +19,8 @@ it("exposes the intended API", () => {
     const severityFatal: Severity = "fatal";
     const severityError: Severity = "error";
     const severityWarning: Severity = "warning";
-    const deciderRegex: SyncDecider = / /;
-    const deciderFunction: SyncDecider = path => {
+    const deciderRegex: AsyncDecider = / /;
+    const deciderFunction: AsyncDecider = async path => {
         const l = path.trim().length;
         return { restricted: l > 42, info: `Length is ${l}.` };
     };
@@ -62,12 +63,9 @@ it("exposes the intended API", () => {
             },
         ],
     };
-    const decidersRegex: readonly SyncDecider[] = [ deciderRegex ];
-    const decidersFunction: readonly SyncDecider[] = [ deciderFunction ];
-    const checkedWithRegex: readonly (readonly RestrictedImportDetails[])[] = check({ source: "", restricted: decidersRegex });
-    const checkedWithFunction: readonly (readonly RestrictedImportDetails[])[] = check({ source: "", restricted: decidersFunction });
-    const checkedWithSetParentNodes: readonly (readonly RestrictedImportDetails[])[] = check({ source: "", restricted: decidersFunction, setParentNodes: false });
-    const everythingInPackageEmptyString: RegExp = everythingInPackage("");
+    const checkedWithRegex: Promise<readonly (readonly RestrictedImportDetails[])[]> = checkAsync({ source: "", deciders: [ matchedBy(deciderRegex) ], fileName: "", setParentNodes: false });
+    const checkedWithFunction: Promise<readonly (readonly RestrictedImportDetails[])[]> = checkAsync({ source: "", deciders: [ deciderFunction ], fileName: "", setParentNodes: true });
+    const everythingInPackageEmptyString: LoaderDecider = everythingInPackage("");
     const everythingOutsideEmptyString: LoaderDecider = everythingOutside([""]);
     const everythingInsideEmptyString: LoaderDecider = everythingInside([""]);
 });

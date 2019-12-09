@@ -1,10 +1,15 @@
 import * as path from "path";
 
+import * as core from "./core";
 import { LoaderFunctionDecider } from "./loader";
 
 // packageName can be e.g. "typescript" or "typescript/lib".
-export function everythingInPackage(packageName: string): RegExp {
-    return new RegExp(String.raw`^${packageName}(\/.*)?$`);
+export function everythingInPackage(packageName: string): core.AsyncDeciderFunction {
+    return matchedBy(new RegExp(String.raw`^${packageName}(\/.*)?$`));
+}
+
+export function matchedBy(r: RegExp): core.AsyncDeciderFunction {
+    return importPath => Promise.resolve({ restricted: r.test(importPath) });
 }
 
 export const everythingInside = everything(true);

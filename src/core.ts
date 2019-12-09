@@ -10,37 +10,11 @@ export type RestrictedImportDetails = ImportDetails & Readonly<{
     info: string | undefined
 }>;
 
-type DeciderFunction<T> = (importPath: string) => T;
-
 export type Decision = { restricted: false } | { restricted: true, info?: string };
 
-export type AsyncDeciderFunction = DeciderFunction<Promise<Decision>>;
-
-export type SyncDeciderFunction = DeciderFunction<Decision>;
+export type AsyncDeciderFunction = (importPath: string) => Promise<Decision>;
 
 type InterestingNode = ts.ImportDeclaration | ts.ExportDeclaration | ts.ImportEqualsDeclaration;
-
-export function checkSync(x: {
-    source: string,
-    deciders: readonly SyncDeciderFunction[],
-    fileName: string,
-    setParentNodes: boolean,
-}): ReadonlyArray<ReadonlyArray<RestrictedImportDetails>> {
-    const sourceFile = ts.createSourceFile(x.fileName, x.source, ts.ScriptTarget.Latest, x.setParentNodes);
-    const imports = importsIn(sourceFile);
-    return x.deciders.map(decider => onlyRestrictedSync(decider, imports));
-}
-
-function onlyRestrictedSync(decider: SyncDeciderFunction, is: readonly ImportDetails[]): readonly RestrictedImportDetails[] {
-    const result = [];
-    for (const i of is) {
-        const decision = decider(i.path);
-        if (decision.restricted) {
-            result.push({ ...i, info: decision.info });
-        }
-    }
-    return result;
-}
 
 export async function checkAsync(x: {
     source: string,
@@ -50,10 +24,10 @@ export async function checkAsync(x: {
 }): Promise<ReadonlyArray<ReadonlyArray<RestrictedImportDetails>>> {
     const sourceFile = ts.createSourceFile(x.fileName, x.source, ts.ScriptTarget.Latest, x.setParentNodes);
     const imports = importsIn(sourceFile);
-    return Promise.all(x.deciders.map(decider => onlyRestrictedAsync(decider, imports)));
+    return Promise.all(x.deciders.map(decider => onlyRestricted(decider, imports)));
 }
 
-async function onlyRestrictedAsync(
+async function onlyRestricted(
     decider: AsyncDeciderFunction,
     is: readonly ImportDetails[],
 ): Promise<readonly RestrictedImportDetails[]> {
@@ -67,10 +41,6 @@ async function onlyRestrictedAsync(
         }
     }
     return results;
-}
-
-export function fromRegex(r: RegExp): SyncDeciderFunction {
-    return importPath => ({ restricted: r.test(importPath) });
 }
 
 function importsIn(rootNode: ts.SourceFile): readonly ImportDetails[] {

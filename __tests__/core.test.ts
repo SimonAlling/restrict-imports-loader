@@ -1,7 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { SyncDecider, check, everythingInPackage } from "../src/index";
+import { AsyncDeciderFunction } from "../src/core";
+import { checkAsync, everythingInPackage } from "../src/index";
 
 const RESTRICT = {
     typescript: [ everythingInPackage("typescript") ],
@@ -16,7 +17,7 @@ const SOURCE = {
 };
 
 it("understands all import kinds", () => {
-    expect(checkAndSummarize(SOURCE.different_import_kinds, RESTRICT.typescript)).toEqual([[
+    checkAndExpect(SOURCE.different_import_kinds, RESTRICT.typescript, [[
         [ `typescript`, `import {} from "typescript";`                        ],
         [ `typescript`, `import * as typescriptStar from "typescript";`       ],
         [ `typescript`, `import typescriptDefault from "typescript";`         ],
@@ -27,7 +28,7 @@ it("understands all import kinds", () => {
 });
 
 it("restricts submodules of restricted packages", () => {
-    expect(checkAndSummarize(SOURCE.submodules, RESTRICT.typescript)).toEqual([[
+    checkAndExpect(SOURCE.submodules, RESTRICT.typescript, [[
         [ `typescript`             , `import "typescript";`              ],
         [ `typescript/index`       , `import "typescript/index";`        ],
         [ `typescript/index.ts`    , `import "typescript/index.ts";`     ],
@@ -38,7 +39,7 @@ it("restricts submodules of restricted packages", () => {
 });
 
 it("can restrict only submodules of packages", () => {
-    expect(checkAndSummarize(SOURCE.submodules, RESTRICT.typescript_lib)).toEqual([[
+    checkAndExpect(SOURCE.submodules, RESTRICT.typescript_lib, [[
         [ `typescript/lib`         , `import "typescript/lib";`          ],
         [ `typescript/lib/index`   , `import "typescript/lib/index";`    ],
         [ `typescript/lib/index.ts`, `import "typescript/lib/index.ts";` ],
@@ -46,31 +47,17 @@ it("can restrict only submodules of packages", () => {
 });
 
 it("treats prefixes correctly", () => {
-    expect(checkAndSummarize(SOURCE.prefixes, RESTRICT.typescript)).toEqual([[
+    checkAndExpect(SOURCE.prefixes, RESTRICT.typescript, [[
         [ `typescript`         , `import "typescript";`          ],
         [ `typescript/index`   , `import "typescript/index";`    ],
         [ `typescript/index.ts`, `import "typescript/index.ts";` ],
     ]]);
 });
 
-it("understands the setParentNodes option", () => {
-    {
-        const badImports = check({ source: SOURCE.minimal, restricted: RESTRICT.typescript, setParentNodes: true });
-        expect(badImports[0][0].node.parent).toBeDefined();
-    }
-    {
-        const badImports = check({ source: SOURCE.minimal, restricted: RESTRICT.typescript, setParentNodes: false });
-        expect(badImports[0][0].node.parent).not.toBeDefined();
-    }
-});
-
-it("defaults to true for setParentNodes", () => {
-    const badImports = check({ source: SOURCE.minimal, restricted: RESTRICT.typescript });
-    expect(badImports[0][0].node.parent).toBeDefined();
-});
-
-function checkAndSummarize(source: string, deciders: readonly SyncDecider[]): readonly (readonly [string, string][])[] {
-    return check({ source, restricted: deciders }).map(items => items.map(item => [ item.path, item.node.getFullText().trim() ]));
+function checkAndExpect(source: string, deciders: readonly AsyncDeciderFunction[], expected: [string, string][][]): void {
+    checkAsync({ source, deciders, fileName: "", setParentNodes: true }).then(output => {
+        expect(output.map(items => items.map(item => [ item.path, item.node.getFullText().trim() ]))).toEqual(expected);
+    })
 }
 
 function sourceFile(name: string): string {
