@@ -12,6 +12,8 @@ npm install --save-dev restrict-imports-loader
 
 **NOTE:** Only static imports are supported; see [_Limitations_](#limitations).
 
+_See also [the complete example repo](https://github.com/SimonAlling/restrict-imports-loader-example)._
+
 Configuration example (`webpack.config.js`):
 
 ```javascript
