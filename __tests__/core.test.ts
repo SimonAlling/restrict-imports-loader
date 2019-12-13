@@ -1,8 +1,7 @@
-import * as path from "path";
-import * as fs from "fs";
-
 import { AsyncDeciderFunction } from "../src/core";
 import { checkAsync, everythingInPackage } from "../src/index";
+
+import { sourceFile } from "./utilities";
 
 const RESTRICT = {
     typescript: [ everythingInPackage("typescript") ],
@@ -58,8 +57,4 @@ function checkAndExpect(source: string, deciders: readonly AsyncDeciderFunction[
     checkAsync({ source, deciders, fileName: "", setParentNodes: true }).then(output => {
         expect(output.map(items => items.map(item => [ item.path, item.node.getFullText().trim() ]))).toEqual(expected);
     })
-}
-
-function sourceFile(name: string): string {
-    return fs.readFileSync(path.resolve(__dirname, "src", name)).toString();
 }
