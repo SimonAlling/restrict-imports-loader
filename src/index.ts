@@ -7,7 +7,12 @@ export { RestrictedImportDetails, checkAsync } from "./core";
 
 export { LoaderDecider, LoaderOptions, Severity } from "./loader";
 
-export { everythingInPackage, everythingOutside, everythingInside, matchedBy } from "./deciders";
+export {
+    everythingInPackage,
+    everythingInside,
+    everythingOutside,
+    matchedBy,
+} from "./deciders";
 
 export default function(this: webpack.loader.LoaderContext, source: string) {
     loader.run(this, source);
