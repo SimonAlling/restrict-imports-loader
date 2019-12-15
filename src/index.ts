@@ -8,6 +8,7 @@ export { RestrictedImportDetails, checkAsync } from "./core";
 export { LoaderDecider, LoaderOptions, Severity } from "./loader";
 
 export {
+    climbingUpwardsMoreThan,
     everythingInPackage,
     everythingInside,
     everythingOutside,

@@ -245,6 +245,38 @@ describe("Loader", () => {
         );
     });
 
+    it("should restrict imports correctly with climbingUpwardsMoreThan", done => {
+        compile(
+            CONFIG_WITH({
+                entry: "climbing-upwards.ts",
+                severity: "error",
+                restricted: deciders.climbingUpwardsMoreThan(1),
+            }),
+            (stats, compilation) => {
+                expect(stats.hasErrors()).toBe(true);
+                expect(compilation.errors).toHaveLength(1);
+                const firstError = compilation.errors[0];
+                expect(firstError).toBeInstanceOf(Error);
+                expect(firstError.name).toBe(`ModuleError`);
+                expect(firstError.message.match(/•/g)).toHaveLength(8);
+                expect(firstError.message).toMatch(`import {} from "../../src";`);
+                expect(firstError.message).toMatch(`import {} from "./../../src";`);
+                expect(firstError.message).toMatch(`import {} from "../../src/loader";`);
+                expect(firstError.message).toMatch(`import {} from ".././../src/loader";`);
+                expect(firstError.message).toMatch(`import {} from "./.././../src/loader";`);
+                expect(firstError.message).toMatch(`import {} from "../../__tests__/src/functions";`);
+                expect(firstError.message).toMatch(`import {} from "../src/../../__tests__/src/functions";`);
+                expect(firstError.message).toMatch(`import {} from "typescript/lib/../../typescript/lib/typescript";`);
+                expect(firstError.message).not.toMatch(`import {} from "typescript";`);
+                expect(firstError.message).not.toMatch(`import {} from "./functions";`);
+                expect(firstError.message).not.toMatch(`import {} from "../webpack.config";`);
+                expect(firstError.message).not.toMatch(`import {} from "./../webpack.config";`);
+                expect(firstError.message).not.toMatch(`import {} from "../src/functions";`);
+                done();
+            }
+        );
+    });
+
     it("should format error messages correctly", done => {
         compile(
             CONFIG_WITH({ entry: "multiple.ts", severity: "error" }),

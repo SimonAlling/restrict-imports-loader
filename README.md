@@ -226,6 +226,34 @@ module.exports = {
 ```
 
 
+### Restricting excessive directory climbing
+
+You can restrict the number of consecutive `../`s an import may contain.
+(`.././../` counts as two consecutive `../`s.)
+
+```typescript
+const { climbingUpwardsMoreThan } = require("restrict-imports-loader");
+
+module.exports = {
+  // ...
+  {
+    loader: "restrict-imports-loader",
+    options: {
+      severity: "warning",
+      rules: [
+        {
+          restricted: climbingUpwardsMoreThan(1),
+          info: `These imports climb the directory tree excessively:`,
+        },
+      ],
+    },
+  },
+};
+```
+
+This example allows `"../foo"` but restricts `"../../foo"`.
+
+
 ### Limitations
 
 Only **static ES2015 (ES6) imports** are supported, for example:

@@ -8,6 +8,7 @@ import {
     Severity,
     AsyncDecider,
     checkAsync,
+    climbingUpwardsMoreThan,
     everythingInPackage,
     everythingOutside,
     everythingInside,
@@ -68,4 +69,5 @@ it("exposes the intended API", () => {
     const everythingInPackageEmptyString: LoaderDecider = everythingInPackage("");
     const everythingOutsideEmptyString: LoaderDecider = everythingOutside([""]);
     const everythingInsideEmptyString: LoaderDecider = everythingInside([""]);
+    const climbingUpwardsMoreThan0: LoaderDecider = climbingUpwardsMoreThan(0);
 });

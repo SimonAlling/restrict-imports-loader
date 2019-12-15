@@ -3,6 +3,9 @@ import * as path from "path";
 import * as core from "./core";
 import { LoaderFunctionDecider } from "./loader";
 
+const UP_ONE_LEVEL_LENGTH = 3; // "../"
+const REGEX_UP_LEVELS = new RegExp(String.raw`(?:\.\.\/)+`, "g");
+
 // packageName can be e.g. "typescript" or "typescript/lib".
 export function everythingInPackage(packageName: string): core.AsyncDeciderFunction {
     return matchedBy(new RegExp(String.raw`^${packageName}(\/.*)?$`));
@@ -10,6 +13,30 @@ export function everythingInPackage(packageName: string): core.AsyncDeciderFunct
 
 export function matchedBy(r: RegExp): core.AsyncDeciderFunction {
     return importPath => Promise.resolve({ restricted: r.test(importPath) });
+}
+
+export function climbingUpwardsMoreThan(levels: number): core.AsyncDeciderFunction {
+    return importPath => {
+        const maxLength = lengthOfLongestMatch(normalize(importPath).match(REGEX_UP_LEVELS));
+        const maxClimbs = maxLength / UP_ONE_LEVEL_LENGTH;
+        return Promise.resolve({
+            restricted: maxClimbs > levels,
+            info: `(consecutive "../"s: ${maxClimbs})`,
+        });
+    };
+}
+
+function lengthOfLongestMatch(matches: RegExpMatchArray | null): number {
+    return (
+        matches === null
+        ? 0
+        : matches.reduce((acc, m) => Math.max(acc, m.length), 0)
+    );
+}
+
+// Merges consecutive slashes, then replaces "/./" with "/". Different from path.normalize.
+function normalize(importPath: string): string {
+    return importPath.replace(/\/+/g, "/").replace(/\/\.\//g, "/");
 }
 
 export const everythingInside = everything(true);
