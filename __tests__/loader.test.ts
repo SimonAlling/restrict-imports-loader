@@ -2,7 +2,7 @@ import * as path from "path";
 import * as webpack from "webpack";
 
 import CONFIG_WITH from "./webpack.config";
-import { everythingOutside, everythingInside } from "../src/deciders";
+import * as deciders from "../src/deciders";
 
 const EXAMPLE_ERROR_MESSAGE_WITH_DETAILS = `\
 Found restricted imports:
@@ -196,7 +196,7 @@ describe("Loader", () => {
             CONFIG_WITH({
                 entry: "relative.ts",
                 severity: "error",
-                restricted: everythingOutside([
+                restricted: deciders.everythingOutside([
                     path.resolve(__dirname, "src"),
                     path.resolve(__dirname, "..", "node_modules"),
                 ]),
@@ -223,7 +223,7 @@ describe("Loader", () => {
             CONFIG_WITH({
                 entry: "relative.ts",
                 severity: "error",
-                restricted: everythingInside([
+                restricted: deciders.everythingInside([
                     path.resolve(__dirname, "src"),
                     path.resolve(__dirname, "..", "node_modules"),
                 ]),
@@ -282,7 +282,7 @@ describe("Loader", () => {
     });
 
     it("should format error messages with info correctly", done => {
-        const restricted = everythingInside([
+        const restricted = deciders.everythingInside([
             path.resolve(__dirname, "..", "node_modules"),
             path.resolve(__dirname, "src"),
         ]);
