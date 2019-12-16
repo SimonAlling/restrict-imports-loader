@@ -83,7 +83,7 @@ describe("Deciders", () => {
                 expect(firstError.message).toMatch(`import {} from "../../__tests__/src/functions";`);
                 expect(firstError.message).toMatch(`import {} from "../src/../../__tests__/src/functions";`);
                 expect(firstError.message).toMatch(`import {} from "typescript/lib/../../typescript/lib/typescript";`);
-                expect(firstError.message).toMatch(`(consecutive "../"s: 2)`);
+                expect(firstError.message).toMatch(`(contains 2 consecutive occurrences of "../"; max 1 allowed)`);
                 expect(firstError.message).not.toMatch(`import {} from "typescript";`);
                 expect(firstError.message).not.toMatch(`import {} from "./functions";`);
                 expect(firstError.message).not.toMatch(`import {} from "../webpack.config";`);

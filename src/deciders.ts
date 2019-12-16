@@ -19,9 +19,10 @@ export function climbingUpwardsMoreThan(levels: number): core.AsyncDeciderFuncti
     return importPath => {
         const maxLength = lengthOfLongestMatch(normalize(importPath).match(REGEX_UP_LEVELS));
         const maxClimbs = maxLength / UP_ONE_LEVEL_LENGTH;
+        const s = maxClimbs === 1 ? "" : "s";
         return Promise.resolve({
             restricted: maxClimbs > levels,
-            info: `(consecutive "../"s: ${maxClimbs})`,
+            info: `(contains ${maxClimbs} consecutive occurrence${s} of "../"; max ${levels} allowed)`,
         });
     };
 }
