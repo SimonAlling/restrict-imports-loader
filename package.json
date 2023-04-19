@@ -68,14 +68,14 @@
     "cli-confirm": "^1.0.1",
     "enhanced-resolve": "^4.1.1",
     "jest": "^24.9.0",
-    "no-emit-webpack-plugin": "^2.0.1",
+    "no-emit-webpack-plugin": "^4.0.1",
     "renamer": "^1.1.4",
     "repository-check-dirty": "^1.0.2",
     "ts-jest": "^24.1.0",
     "ts-loader": "^8.4.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.2",
-    "webpack": "^4.41.2"
+    "webpack": "^5.80.0"
   },
   "dependencies": {
     "@types/json-schema": "^7.0.3",
