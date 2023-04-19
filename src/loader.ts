@@ -20,9 +20,9 @@ export type Severity = "fatal" | "error" | "warning";
 
 const SEVERITIES: Severity[] = [ "fatal", "error", "warning" ];
 
-type LoaderContext = webpack.loader.LoaderContext;
+type LoaderContext = webpack.LoaderContext<unknown>;
 
-export type LoaderFunctionDecider = (importPath: string, loaderContext: webpack.loader.LoaderContext) => Promise<core.Decision>;
+export type LoaderFunctionDecider = (importPath: string, loaderContext: webpack.LoaderContext<unknown>) => Promise<core.Decision>;
 
 export type LoaderDecider = RegExp | LoaderFunctionDecider;
 

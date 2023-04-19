@@ -15,7 +15,7 @@ export {
     matchedBy,
 } from "./deciders";
 
-export default function(this: webpack.loader.LoaderContext, source: string) {
+export default function(this: webpack.LoaderContext<unknown>, source: string) {
     loader.run(this, source);
 }
 

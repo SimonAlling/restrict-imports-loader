@@ -51,10 +51,14 @@ function everything(insideIsRestricted: boolean): (dirs: readonly string[]) => L
         return (importPath, loaderContext) => new Promise((resolve, reject) => {
             loaderContext.resolve(loaderContext.context, importPath, (err, result) => {
                 if (err === null) {
-                    resolve({
-                        restricted: insideIsRestricted === dirs.some(contains(result)),
-                        info: `(resolved: ${result})`,
-                    });
+                    if (typeof result === "string") {
+                        resolve({
+                            restricted: insideIsRestricted === dirs.some(contains(result)),
+                            info: `(resolved: ${result})`,
+                        });
+                    } else {
+                        reject(`Expected a string, but result was: ${JSON.stringify(result)}`);
+                    }
                 } else {
                     reject(err.message);
                 }
