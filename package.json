@@ -1,6 +1,6 @@
 {
   "name": "restrict-imports-loader",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "description": "A Webpack loader to restrict imports in ES and TypeScript",
   "keywords": [
     "loader",
