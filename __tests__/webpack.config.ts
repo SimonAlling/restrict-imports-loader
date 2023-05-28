@@ -23,7 +23,7 @@ export default (x: {
                 include: path.resolve(__dirname, SRC_IN_TESTS),
                 use: [
                     {
-                        loader: "awesome-typescript-loader",
+                        loader: "ts-loader",
                         options: {
                             silent: true,
                             transpileOnly: true, // to speed up tests

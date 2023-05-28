@@ -26,7 +26,7 @@ module.exports = {
         include: path.resolve(__dirname, "src"),
         use: [
           {
-            loader: "awesome-typescript-loader", // or babel-loader, etc
+            loader: "ts-loader", // or babel-loader, etc
           },
           {
             loader: "restrict-imports-loader",
